@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, Image, SafeAreaView, StyleSheet, View, Pressable } from 'react-native';
 
 import RadioGroup from 'react-native-radio-buttons-group';
@@ -6,27 +6,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import AsAdmin from './AsAdmin';
 import AsUser from './AsUser';
-
-const radioButtonsData = [{
-    id: '1', 
-    label: 'CUSTOMER',
-    value: 'user',
-    selected: true
-}, {
-    id: '2',
-    label: 'ADMIN',
-    value: 'admin',
-    selected: false
-}]
+import { handleRadio, radioButtonsData } from '../helpers/radioButtonsData';
 
 const Login = () => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsData);
     const [isAdmin, setIsAdmin] = useState(false);
-
-    const handleRadio = (arrRbts) => {
-        setRadioButtons(arrRbts);
-        setIsAdmin(!isAdmin);
-    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -38,11 +22,11 @@ const Login = () => {
                     />
                 </View>
                 <View style={styles.view}>
-                    <Text>Login as</Text>
+                    <Text style={styles.label}>Login as</Text>
                     <RadioGroup 
                         radioButtons={radioButtons} 
                         layout='row'
-                        onPress={(arrRbts) => handleRadio(arrRbts)} 
+                        onPress={(arrRbts) => handleRadio(arrRbts, setRadioButtons, setIsAdmin, isAdmin)} 
                     />
                 </View>
                 {
@@ -69,6 +53,9 @@ const styles = StyleSheet.create({
     },
     view: {
         alignItems: 'center'
+    },
+    label: {
+        fontSize: 12
     }
 })
 

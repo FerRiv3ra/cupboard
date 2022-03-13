@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { Text, View, TextInput, Pressable, Alert } from 'react-native';
+import globalStyles from '../styles/styles';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+
 
 const AsAdmin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const navigation = useNavigation();
 
     const handleLogin = async () => {
         if([email, password].includes('')){
@@ -29,70 +38,50 @@ const AsAdmin = () => {
                 Alert.alert('Error', user['msg']);
             }
 
-            console.log(user);
+            await AsyncStorage.setItem('token', user['token']);
+
+            setEmail('');
+            setPassword('');
+
+            navigation.navigate('AdminMainScreen');
         } catch (error) {
             console.log('Error', error);
         }
     }
         
     return (
-        <View style={styles.view}>
-            <Text style={styles.label}>Email</Text>
+        <View style={globalStyles.view}>
+            <Text style={globalStyles.label}>Email</Text>
             <TextInput 
-                style={styles.input}
+                style={globalStyles.input}
                 keyboardType='email-address'
                 placeholder='Email'
                 placeholderTextColor={'#666'}
                 onChangeText={setEmail}
+                value={email}
             /> 
-            <Text style={styles.label}>Password</Text>
+            <Text style={globalStyles.label}>Password</Text>
             <TextInput 
-                style={styles.input}
+                style={globalStyles.input}
                 secureTextEntry={true}
                 textContentType='password'
                 placeholder='Password'
                 placeholderTextColor={'#666'}
                 onChangeText={setPassword}
+                value={password}
             /> 
             <Pressable
-                style={styles.button}
+                style={[globalStyles.button, globalStyles.orange]}
                 onPress={handleLogin}
             >
-                <Text style={styles.textBtn}>Login</Text>
+                <FontAwesomeIcon 
+                    style={[globalStyles.icon, {color: '#000'}]}
+                    icon={faSignInAlt}
+                />
+                <Text style={globalStyles.textBtn}> Login</Text>
             </Pressable>
         </View>
   )
 }
-
-const styles = StyleSheet.create({
-    view: {
-        marginHorizontal: 30,
-        marginBottom: 15
-    },
-    label: {
-        color: '#000',
-        marginBottom: 10,
-        marginTop: 15,
-        fontSize: 20,
-        fontWeight: '600'
-    },
-    input: {
-        backgroundColor: '#FFF',
-        padding: 15,
-        borderRadius: 10
-    },
-    button:{
-        marginVertical: 40,
-        backgroundColor: '#E6653E',
-        paddingVertical: 20,
-        borderRadius: 10
-    },
-    textBtn:{
-        textAlign: 'center',
-        textTransform: 'uppercase',
-        fontWeight: '700',
-        fontSize: 16
-    }
-})
 
 export default AsAdmin;
