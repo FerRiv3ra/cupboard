@@ -16,7 +16,7 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState}) => {
     }
 
     return (
-        <SafeAreaView style={[globalStyles.flex, globalStyles.orange]}>
+        <SafeAreaView style={[globalStyles.flex, globalStyles.lightGreen]}>
             <ScrollView>
                 <View style={styles.qrCode}>
                     {uid !== '' && <QRCode
@@ -70,8 +70,7 @@ const styles = StyleSheet.create({
     },
     info: {
         marginHorizontal: 30,
-        paddingVertical: 40,
-        paddingHorizontal: 20,
+        padding: 20,
         borderRadius: 20,
         backgroundColor: '#FFF'
     },

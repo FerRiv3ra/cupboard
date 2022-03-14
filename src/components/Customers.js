@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Pressable, ScrollView } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Pressable, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import globalStyles from '../styles/styles';
 import User from './User';
@@ -6,6 +6,7 @@ import ModalNewUser from './ModalNewUser';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const radioButtonsData = [{
     id: '1', 
@@ -24,7 +25,10 @@ const Customers = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [admins, setAdmins] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [user, setUser] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         async function fetchMyAPI() {
@@ -38,7 +42,8 @@ const Customers = () => {
         }
     
         fetchMyAPI();
-    }, [modalVisible])
+        setRefresh(false);
+    }, [modalVisible, refresh])
 
     const handleNewUser = () => {
         setModalVisible(!modalVisible);
@@ -47,6 +52,48 @@ const Customers = () => {
     const handleChange = (arrRbt) => {
         setRadioButtons(arrRbt);
         setIsAdmin(!isAdmin);
+    }
+
+    const userEdit = (uid, role) => {
+        let userToEdit = {};
+        if(role === 'ADMIN_ROLE'){
+            userToEdit = admins.filter((adm) => adm.uid === uid);
+        }else{
+            userToEdit = customers.filter((cus) => cus.uid === uid);
+        }
+
+        setUser(userToEdit[0]);
+    }
+
+    const userDelete = (uid) => {
+        const deleteU = async () => {
+            const token = await AsyncStorage.getItem('token');
+            console.log(token);
+            const url = `https://grubhubbackend.herokuapp.com/api/users/${uid}`;
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-token": token
+                },
+            });
+            const result = await response.json();
+
+            if(result.msg){
+                Alert.alert('Error', `${result.msg} please login again`)
+            }
+
+            if(result.errors){
+                Alert.alert('Error', result.errors[0].msg)
+            }
+
+            setRefresh(true);
+        }
+
+        Alert.alert('Are you sure you want to delete this user?', 'A deleted user cannot be recovered', [
+            {text: 'Cancel'},
+            {text: 'Yes, delete', onPress: () => deleteU()},
+        ]);
     }
 
     return (
@@ -74,36 +121,30 @@ const Customers = () => {
                 >{isAdmin ? 'ADMINS' : 'CUSTOMERS'}</Text>
             {isAdmin ? 
                 admins.length === 0 && 
-                <Text style={[globalStyles.label, {fontSize: 12}]}>There are admins to show</Text>
+                <Text style={[globalStyles.label, globalStyles.textCenter, {fontSize: 12}]}>There are admins to show</Text>
                 :
                 customers.length === 0 &&
-                <Text style={[globalStyles.label, {fontSize: 12}]}>There are customers to show</Text>
+                <Text style={[globalStyles.label, globalStyles.textCenter, {fontSize: 12}]}>There are customers to show</Text>
             }
-            {!isAdmin ? 
-                <FlatList 
-                    style={styles.list}
-                    data={customers}
-                    keyExtractor={(item) => item.uid}
-                    renderItem={({item}) => {
-                        return(
-                            <User item={item}/>
-                        )
-                    }}
-                /> :
-                <FlatList 
-                    style={styles.list}
-                    data={admins}
-                    keyExtractor={(item) => item.uid}
-                    renderItem={({item}) => {
-                        return(
-                            <User item={item}/>
-                        )
-                    }}
-                />
-            }
+            <FlatList 
+                style={styles.list}
+                data={isAdmin ? admins : customers}
+                keyExtractor={(item) => item.uid}
+                renderItem={({item}) => {
+                    return(
+                        <User 
+                            item={item} 
+                            setModalVisible={setModalVisible} 
+                            userEdit={userEdit}
+                            userDelete={userDelete}
+                        />
+                    )
+                }}
+            /> 
             <ModalNewUser 
                 setModalVisible={setModalVisible}
                 modalVisible={modalVisible}
+                user={user}
             />
         </View>
     )
@@ -111,7 +152,8 @@ const Customers = () => {
 
 const styles = StyleSheet.create({
     list: {
-        marginHorizontal: 30
+        marginHorizontal: 30,
+        marginBottom: 5
     },
     btn: {
         marginTop: 20,

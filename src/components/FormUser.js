@@ -4,9 +4,39 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import globalStyles from '../styles/styles'
 import DatePicker from 'react-native-date-picker'
 import { RadioGroup } from 'react-native-radio-buttons-group'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
 
 const FormUser = (props) => {
-    const {name, setName, email, setEmail, password, setPassword, confirmPass, setConfirmPass, date, today, handleDate, setAddress, address, setPostcode, postcode, phone, setPhone, setNoPeople, noPeople, handleRadioChild, handleCreate, isAdmin, setChild, child, radioChild, setRadioChild} = props;
+    const {name, 
+        setName, 
+        email, 
+        setEmail, 
+        password, 
+        setPassword, 
+        confirmPass, 
+        setConfirmPass, 
+        date, 
+        today, 
+        handleDate, 
+        setAddress, 
+        address, 
+        setPostcode, 
+        postcode, 
+        phone, 
+        setPhone, 
+        setNoPeople, 
+        noPeople, 
+        handleRadioChild, 
+        handleCreate, 
+        isAdmin, 
+        setChild, 
+        child, 
+        radioChild, 
+        setRadioChild,
+        uid
+    } = props;
+
     return (
         <KeyboardAwareScrollView>
             <Text style={globalStyles.label}>Name (required)</Text>
@@ -106,7 +136,7 @@ const FormUser = (props) => {
                         <RadioGroup
                             radioButtons={radioChild} 
                             layout='row'
-                            onPress={(arrRbts) => handleRadioChild(arrRbts, setRadioChild, setChild, child)} 
+                            onPress={(arrRbtsC) => handleRadioChild(arrRbtsC)} 
                         />
                     </View>
                 </View>
@@ -115,7 +145,14 @@ const FormUser = (props) => {
                 style={[globalStyles.button, globalStyles.green]}
                 onPress={handleCreate}
             >
-                <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>+ Create</Text>
+                {
+                    uid !== '' && 
+                    <FontAwesomeIcon 
+                        style={[globalStyles.icon, {color: '#FFF'}]}
+                        icon={faSave}
+                    />
+                }
+                <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>{uid === '' ? '+ Create' : ' Save'}</Text>
             </Pressable>
         </KeyboardAwareScrollView>
     )

@@ -34,13 +34,25 @@ const radioButtonsDataChild = [{
     selected: false
 }];
 
+const radioWithChild = [{
+    id: '1', 
+    label: 'No',
+    value: 'no',
+    selected: false
+}, {
+    id: '2',
+    label: 'Yes',
+    value: 'yes',
+    selected: true
+}];
+
 const handleRadio = (arrRbts, setRadioButtons, setIsAdmin, isAdmin) => {
     setRadioButtons(arrRbts);
     setIsAdmin(!isAdmin);
 }
 
-const handleRadioChild = (arrRbts, setRadioChild, setChild, child) => {
-    setRadioChild(arrRbts);
+const handleRadioChild = (arrRbtsC, setRadioChild, setChild, child) => {
+    setRadioChild(arrRbtsC);
     setChild(!child);
 }
 
@@ -49,5 +61,6 @@ export {
     radioButtonsDataNU,
     handleRadio,
     radioButtonsDataChild,
-    handleRadioChild
+    handleRadioChild,
+    radioWithChild
 }

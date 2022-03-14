@@ -4,8 +4,8 @@ import globalStyles from '../styles/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTrashCan, faPencil } from '@fortawesome/free-solid-svg-icons';
 
-const User = ({item}) => {
-    const { name, email, dob, customer_id, role } = item;
+const User = ({item, setModalVisible, userEdit, userDelete}) => {
+    const { name, email, dob, customer_id, role, uid } = item;
     return (
         <View style={styles.container}>
             {role === 'ADMIN_ROLE' ? 
@@ -21,7 +21,13 @@ const User = ({item}) => {
                 </View> 
             }
             <View style={styles.btnContainer}>
-                <Pressable style={[styles.btn, globalStyles.orange]}>
+                <Pressable 
+                    style={[styles.btn, globalStyles.orange]}
+                    onLongPress={() => {
+                        setModalVisible(true);
+                        userEdit(uid, role)
+                    }}
+                >
                     <FontAwesomeIcon 
                         style={[globalStyles.icon, {color: '#FFF'}]}
                         icon={faPencil}
@@ -30,7 +36,10 @@ const User = ({item}) => {
                     <Text style={styles.txtBtn}> Edit</Text>
                 </Pressable>
 
-                <Pressable style={[styles.btn, styles.btnDelete]}>
+                <Pressable 
+                    style={[styles.btn, styles.btnDelete]}
+                    onLongPress={() => userDelete(uid)}
+                >
                     <FontAwesomeIcon 
                             style={[globalStyles.icon, {color: '#FFF'}]}
                             icon={faTrashCan}

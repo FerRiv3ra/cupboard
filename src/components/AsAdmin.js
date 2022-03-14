@@ -20,7 +20,7 @@ const AsAdmin = () => {
         }
 
         const userLogin = {
-            email,
+            email: email.trim(),
             password
         }
 
@@ -34,8 +34,11 @@ const AsAdmin = () => {
             });
             const user = await response.json();
 
-            if(user['msg'] !== undefined){
-                Alert.alert('Error', user['msg']);
+            const { errors } = user; 
+
+            if(errors !== undefined){
+                Alert.alert('Error', errors[0]['msg']);
+                return;
             }
 
             await AsyncStorage.setItem('token', user['token']);

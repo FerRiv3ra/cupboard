@@ -2,11 +2,11 @@ import { Alert, View, Text, Modal, Pressable, SafeAreaView, ScrollView, StyleShe
 import React, { useState, useEffect } from 'react';
 import globalStyles from '../styles/styles';
 import { RadioGroup } from 'react-native-radio-buttons-group';
-import { radioButtonsDataChild, radioButtonsDataNU } from '../helpers/radioButtonsData';
+import { radioButtonsDataChild, radioButtonsDataNU, radioWithChild } from '../helpers/radioButtonsData';
 
 import FormUser from './FormUser';
 
-const ModalNewUser = ({modalVisible, setModalVisible}) => {
+const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsDataNU);
     const [radioChild, setRadioChild] = useState(radioButtonsDataChild);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -14,6 +14,7 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
     const today = new Date();
     const [date, setDate] = useState(today);
 
+    const [uid, setUid] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('abc123');
     const [confirmPass, setConfirmPass] = useState('abc123');
@@ -27,8 +28,35 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
     const [role, setRole] = useState('USER_ROLE');
 
     useEffect(() => {
-        resetData();
-        if(isAdmin){
+        if(userE['uid'] !== undefined){
+            setUid(userE.uid)
+            setName(userE.name)
+            setNoPeople(userE.noPeople.toString())
+            setDob(userE.dob)
+            setChild(userE.child)
+            setAddress(userE.address)
+            setPostcode(userE.postcode)
+            setPhone(userE.phone)
+            setEmail(userE.email)
+            setRole(userE.role)
+
+            const [d, m, y] = userE.dob.split('/');
+            setDate(new Date(`${y}-${m}-${d}`));
+
+            if(child){
+                setRadioChild(radioWithChild);
+            }else{
+                setRadioChild(radioButtonsDataChild);
+            }
+        }
+    }, [userE]);
+    
+
+    const handleRadio = (arrRbts) => {
+        setRadioButtons(arrRbts);
+        setIsAdmin(!isAdmin);
+        
+        if(!arrRbts[0].selected){
             setRole('ADMIN_ROLE')
             setPassword('')
             setConfirmPass('')
@@ -37,16 +65,10 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
             setPassword('abc123')
             setConfirmPass('abc123')
         }
-    }, [isAdmin])
-    
-
-    const handleRadio = (arrRbts) => {
-        setRadioButtons(arrRbts);
-        setIsAdmin(!isAdmin);
     }
 
-    const handleRadioChild = (arrRbts) => {
-        setRadioButtons(arrRbts);
+    const handleRadioChild = (arrRbtsC) => {
+        setRadioChild(arrRbtsC);
         setChild(!child);
     }
 
@@ -75,12 +97,13 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
         setEmail('');
         setRole('');
         setRadioChild(radioButtonsDataChild);
+        setRadioButtons(radioButtonsDataNU);
+        setUid('');
     }
 
     const sendData = async () => {
         const user = {
             name,
-            password,
             noPeople: Number(noPeople),
             dob,
             child,
@@ -91,9 +114,16 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
             role
         }
 
+        if(password !== ''){
+            user.password = password
+        }
+
+        console.log(user);
+        const url = `https://grubhubbackend.herokuapp.com/api/users/${uid !== '' ? uid : ''}`;
+
         try {
-            const response = await fetch('https://grubhubbackend.herokuapp.com/api/users/', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: uid === '' ? 'POST' : 'PUT',
                 headers: {
                     "Content-Type": "application/json"
                     },
@@ -102,17 +132,24 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
             const userCreated = await response.json();
 
             if(userCreated['errors']){
-                Alert.alert('Error', userCreated.errors[0].msg)
+                Alert.alert('Error', userCreated.errors[0].msg);
+                return;
             }
-            if(userCreated.uid){
-                Alert.alert('ALert', 'User Created');
-                setModalVisible(!modalVisible);
+            if(uid !== ''){
+                Alert.alert('User edited', `User with customer ID ${userE.customer_id} modified`)
+            }else if(userCreated.uid){
+                if(userCreated.role === 'ADMIN_ROLE'){
+                    Alert.alert('User created', 'New admin created');
+                }else{
+                    Alert.alert('User created', `User ID ${userCreated.customer_id} assigned`);
+                }
             }
+            resetData();
+            setModalVisible(!modalVisible);
         } catch (error) {
             console.log(error);
         }
 
-        resetData();
     }
 
     const handleCreate = () => {
@@ -121,7 +158,7 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
             return;
         }
 
-        if([name, password, confirmPass, dob, address, postcode].includes('')){
+        if(uid === '' && [name, password, confirmPass, dob, address, postcode].includes('')){
             Alert.alert('Error', 'Required fields are empty');
             return;
         }
@@ -145,20 +182,23 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
                     <View style={styles.container}>
                         <Pressable 
                             style={[globalStyles.button, globalStyles.orange, {marginBottom: 10}]}
-                            onPress={() => setModalVisible(!modalVisible)}
+                            onPress={() => {
+                                setModalVisible(!modalVisible);
+                                resetData();
+                            }}
                         >
                             <Text
                                 style={globalStyles.textBtn}
                             >X Cancel</Text>
                         </Pressable>
-                        <View style={{alignSelf: 'center'}} >
+                        {uid === '' && <View style={{alignSelf: 'center'}} >
                             <Text style={[globalStyles.label, globalStyles.textCenter]}>User Type</Text>
                             <RadioGroup
                                 radioButtons={radioButtons} 
                                 layout='row'
                                 onPress={(arrRbts) => handleRadio(arrRbts)} 
                             />
-                        </View>
+                        </View>}
                         <FormUser 
                             name={name}
                             setName={setName}
@@ -186,6 +226,7 @@ const ModalNewUser = ({modalVisible, setModalVisible}) => {
                             child={child}
                             setChild={setChild}
                             setRadioChild={setRadioChild}
+                            uid={uid}
                         />
                     </View>
                 </ScrollView>
