@@ -122,10 +122,10 @@ const FormUser = (props) => {
             /> 
             {!isAdmin && 
                 <View>
-                    <Text style={globalStyles.label}>People in family</Text>
+                    <Text style={globalStyles.label}>People in household</Text>
                     <TextInput 
                         style={globalStyles.input}
-                        placeholder='People in family'
+                        placeholder='People in household'
                         keyboardType='number-pad'
                         placeholderTextColor={'#666'}
                         onChangeText={setNoPeople}

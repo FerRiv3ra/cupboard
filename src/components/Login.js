@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, Image, SafeAreaView, StyleSheet, View, Pressable } from 'react-native';
+import { Text, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 
 import RadioGroup from 'react-native-radio-buttons-group';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -40,7 +40,7 @@ const Login = () => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#B0CA91',
+        backgroundColor: '#B7DCCC',
         justifyContent: 'center',
         flex: 1
     },

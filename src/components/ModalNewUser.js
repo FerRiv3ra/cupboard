@@ -40,6 +40,10 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             setEmail(userE.email)
             setRole(userE.role)
 
+            if(userE.role === 'ADMIN_ROLE'){
+                setIsAdmin(true);
+            }
+
             const [d, m, y] = userE.dob.split('/');
             setDate(new Date(`${y}-${m}-${d}`));
 
@@ -118,7 +122,6 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             user.password = password
         }
 
-        console.log(user);
         const url = `https://grubhubbackend.herokuapp.com/api/users/${uid !== '' ? uid : ''}`;
 
         try {

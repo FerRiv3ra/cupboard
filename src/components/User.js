@@ -1,12 +1,28 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
 import React from 'react';
 import globalStyles from '../styles/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTrashCan, faPencil } from '@fortawesome/free-solid-svg-icons';
 
-const User = ({item, setModalVisible, userEdit, userDelete}) => {
+const User = ({
+    item, 
+    setModalVisible, 
+    userEdit, 
+    userDelete,
+    setModalVisibleUser,
+    selectUser
+}) => {
     const { name, email, dob, customer_id, role, uid } = item;
     return (
+        <View>
+            <Pressable
+                onLongPress={() => {
+                    if(role !== 'ADMIN_ROLE'){
+                        selectUser(uid, role);
+                        setModalVisibleUser(true);
+                    }
+                }}
+            >
         <View style={styles.container}>
             {role === 'ADMIN_ROLE' ? 
                 <View> 
@@ -48,6 +64,8 @@ const User = ({item, setModalVisible, userEdit, userDelete}) => {
                     <Text style={styles.txtBtn}> Delete</Text>
                 </Pressable>
             </View>
+        </View>
+        </Pressable>        
         </View>
     )
 }

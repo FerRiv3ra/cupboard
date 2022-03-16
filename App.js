@@ -16,6 +16,7 @@ import Login from './src/components/Login';
 import AdminMainScreen from './src/components/AdminMainScreen';
 import Customers from './src/components/Customers';
 import Cupboard from './src/components/Cupboard';
+import WelcomeScreen from './src/screens/WelcomeScreen';
 
 
 const Stack = createStackNavigator();
@@ -25,7 +26,15 @@ const App = () => {
 
   return (
     <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="WelcomeScreen">
+            <Stack.Screen 
+                name='WelcomeScreen'
+                component={WelcomeScreen}
+                options={{
+                  title: 'Welcome Screen',
+                  headerShown: false
+                }}
+            />
             <Stack.Screen 
                 name='Login'
                 component={Login}

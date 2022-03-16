@@ -6,13 +6,19 @@ import { SafeAreaView, Text, View, StyleSheet, Pressable, ScrollView } from 'rea
 import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
 
-const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState}) => {
-    const { child, customer_id, name, noPeople, uid } = (userLogged['user']);
+const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromUsers}) => {
+    console.log(fromUsers);
+    const FromCus = fromUsers === undefined ? false : true;
+    const { child, customer_id, name, noPeople, uid, phone } = (!FromCus ? userLogged['user'] : fromUsers.user);
     const logoFromFile = require('../assets/logovc.png');
 
     const logout = () => {
-        resetState();
-        setModalVisible(!modalVisible);
+        if(FromCus){
+            fromUsers.resetState();
+        }else{
+            resetState();
+            setModalVisible(!modalVisible);
+        }
     }
 
     return (
@@ -20,7 +26,7 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState}) => {
             <ScrollView>
                 <View style={styles.qrCode}>
                     {uid !== '' && <QRCode
-                        color='#4b6423'
+                        color='#4C5D23'
                         backgroundColor='#FFF'
                         value={uid}
                         logo={logoFromFile}
@@ -38,8 +44,11 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState}) => {
                     <Text style={styles.title}>Children: {''}
                         <Text style={styles.textInfo}>{child ? 'Yes' : 'No'}</Text>
                     </Text>
-                    <Text style={styles.title}>People in family: {''}
+                    <Text style={styles.title}>People in household: {''}
                         <Text style={styles.textInfo}>{noPeople}</Text>
+                    </Text>
+                    <Text style={styles.title}>Phone: {''}
+                        <Text style={styles.textInfo}>{phone ?? ''}</Text>
                     </Text>
                 </View>
                 <Pressable
@@ -50,7 +59,7 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState}) => {
                         style={globalStyles.icon}
                         icon={faSignOut}
                     />
-                    <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Logout</Text>
+                    <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>{ FromCus ? ' Exit' : ' Logout'}</Text>
                 </Pressable>
             </ScrollView>
         </SafeAreaView>
@@ -83,7 +92,7 @@ const styles = StyleSheet.create({
     textInfo: {
         textTransform: 'capitalize',
         fontWeight: '800',
-        color: '#4b6423'
+        color: '#4C5D23'
     }
 })
 

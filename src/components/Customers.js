@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Pressable, Alert } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Pressable, Alert, Modal } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import globalStyles from '../styles/styles';
 import User from './User';
@@ -7,6 +7,7 @@ import { RadioGroup } from 'react-native-radio-buttons-group';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalUser from './ModalUser';
 
 const radioButtonsData = [{
     id: '1', 
@@ -27,6 +28,7 @@ const Customers = () => {
     const [customers, setCustomers] = useState([]);
     const [user, setUser] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleUser, setModalVisibleUser] = useState(false);
 
     const [refresh, setRefresh] = useState(false);
 
@@ -65,10 +67,26 @@ const Customers = () => {
         setUser(userToEdit[0]);
     }
 
+    const selectUser = (uid, role) => {
+        let userSelected = {};
+        if(role === 'ADMIN_ROLE'){
+            userSelected = admins.filter((adm) => adm.uid === uid);
+        }else{
+            userSelected = customers.filter((cus) => cus.uid === uid);
+        }
+
+        setUser(userSelected[0]);
+    }
+
+    const resetState = () => {
+        setModalVisibleUser(false);
+        setUser({});
+    }
+
     const userDelete = (uid) => {
         const deleteU = async () => {
             const token = await AsyncStorage.getItem('token');
-            console.log(token);
+
             const url = `https://grubhubbackend.herokuapp.com/api/users/${uid}`;
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -137,6 +155,8 @@ const Customers = () => {
                             setModalVisible={setModalVisible} 
                             userEdit={userEdit}
                             userDelete={userDelete}
+                            setModalVisibleUser={setModalVisibleUser}
+                            selectUser={selectUser}
                         />
                     )
                 }}
@@ -146,6 +166,19 @@ const Customers = () => {
                 modalVisible={modalVisible}
                 user={user}
             />
+            {modalVisibleUser && 
+                <Modal
+                    animationType='slide'
+                    visible={modalVisibleUser}
+                >
+                    <ModalUser 
+                        fromUsers={{
+                            user,
+                            resetState
+                        }}
+                    />
+                </Modal>
+            }
         </View>
     )
 }

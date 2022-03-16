@@ -53,13 +53,13 @@ const globalStyles = StyleSheet.create({
         elevation: 11,
     },
     orange: {
-        backgroundColor: '#E6653E',
+        backgroundColor: '#ED7619',
     },
     green: {
-        backgroundColor: '#4b6423',
+        backgroundColor: '#4C5D23',
     },
     lightGreen: {
-        backgroundColor: '#B0CA91',
+        backgroundColor: '#B7DCCC',
     },
     flex: {
         flex: 1
