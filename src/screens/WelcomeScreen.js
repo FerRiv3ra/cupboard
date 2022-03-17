@@ -39,7 +39,7 @@ const WelcomeScreen = () => {
                             style={[globalStyles.icon, {color: '#FFF'}]}
                             icon={faSignInAlt}
                         />
-                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
+                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Start</Text>
                     </Pressable>
                 </Animatable.View>
                 <Animatable.View

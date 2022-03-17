@@ -1,7 +1,7 @@
 import { faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
-import { SafeAreaView, Text, View, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 
 import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
