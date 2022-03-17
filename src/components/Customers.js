@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Pressable, Alert, Modal } from 'react-native'
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Pressable, Alert, Modal } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import globalStyles from '../styles/styles';
 import User from './User';
@@ -24,6 +24,7 @@ const radioButtonsData = [{
 const Customers = () => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsData);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [admins, setAdmins] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [user, setUser] = useState({});
@@ -33,6 +34,7 @@ const Customers = () => {
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
+        setIsLoading(true);
         async function fetchMyAPI() {
             let response = await fetch('https://grubhubbackend.herokuapp.com/api/users?limit=0')
             response = await response.json()
@@ -40,6 +42,7 @@ const Customers = () => {
             setAdmins(adminsFilter);
 
             const customersFilter = response.users.filter((cus) => cus.role === 'USER_ROLE');
+            setIsLoading(false);
             setCustomers(customersFilter);
         }
     
@@ -137,7 +140,11 @@ const Customers = () => {
             <Text 
                     style={[globalStyles.label, globalStyles.textCenter]}
                 >{isAdmin ? 'ADMINS' : 'CUSTOMERS'}</Text>
-            {isAdmin ? 
+            {isLoading ? <ActivityIndicator 
+                            animating={isLoading}
+                            size="large"
+                        /> :
+            isAdmin ? 
                 admins.length === 0 && 
                 <Text style={[globalStyles.label, globalStyles.textCenter, {fontSize: 12}]}>There are admins to show</Text>
                 :

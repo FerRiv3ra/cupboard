@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const Cupboard = () => {
+const NewReport = () => {
   return (
     <View>
-      <Text>Cupboard</Text>
+      <Text>NewReport</Text>
     </View>
   )
 }
 
-export default Cupboard;
+export default NewReport;

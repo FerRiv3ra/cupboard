@@ -7,6 +7,7 @@ import { faSignOut, faUser, faUtensils } from '@fortawesome/free-solid-svg-icons
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
+import * as Animatable from 'react-native-animatable';
 
 const AdminMainScreen = () => {
     const navigation = useNavigation();
@@ -28,40 +29,62 @@ const AdminMainScreen = () => {
     return (
             <ScrollView style={[globalStyles.flex, globalStyles.lightGreen]}>
                 <SafeAreaView style={styles.container}>
-                    <Image 
-                        style={styles.img}
-                        source={require('../assets/logovc.png')}
-                    />
-                    <Pressable 
-                        style={[globalStyles.button, globalStyles.orange]}
-                        onPress={() => handleNavigate('Cupboard')}
+                    <Animatable.View
+                        animation={'pulse'}
+                        easing="ease-out" 
+                        iterationCount="infinite" 
                     >
-                        <FontAwesomeIcon 
-                            style={[globalStyles.icon]}
-                            icon={faUtensils}
+                        <Image 
+                            style={styles.img}
+                            source={require('../assets/logovc.png')}
                         />
-                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Community cupboard</Text>
-                    </Pressable>
-                    <Pressable 
-                        style={[globalStyles.button, globalStyles.orange, styles.noMargin]}
-                        onPress={() => handleNavigate('Customers')}
+                    </Animatable.View>
+                    <Animatable.View
+                        animation={'bounceInLeft'}
+                        delay={1000}
                     >
-                        <FontAwesomeIcon 
-                            style={globalStyles.icon}
-                            icon={faUser}
-                        />
-                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Users</Text>
-                    </Pressable>
-                    <Pressable 
-                        style={[globalStyles.button, globalStyles.green, styles.btn]}
-                        onLongPress={handleLogout}
+                        <Pressable 
+                            style={[globalStyles.button, globalStyles.orange]}
+                            onPress={() => handleNavigate('Cupboard')}
+                        >
+                            <FontAwesomeIcon 
+                                style={[globalStyles.icon]}
+                                icon={faUtensils}
+                            />
+                            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Community cupboard</Text>
+                        </Pressable>
+                    </Animatable.View>
+                    <Animatable.View
+                        animation={'bounceInRight'}
+                        delay={1000}
                     >
-                        <FontAwesomeIcon 
-                            style={globalStyles.icon}
-                            icon={faSignOut}
-                        />
-                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Logout</Text>
-                    </Pressable>
+                        <Pressable 
+                            style={[globalStyles.button, globalStyles.orange, styles.noMargin]}
+                            onPress={() => handleNavigate('Customers')}
+                        >
+                            <FontAwesomeIcon 
+                                style={globalStyles.icon}
+                                icon={faUser}
+                            />
+                            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Users</Text>
+                        </Pressable>
+                    </Animatable.View>
+                    <Animatable.View
+                        animation={'bounceInUp'}
+                        delay={1000}
+                        duration={2500}
+                    >
+                        <Pressable 
+                            style={[globalStyles.button, globalStyles.green, styles.btn]}
+                            onLongPress={handleLogout}
+                        >
+                            <FontAwesomeIcon 
+                                style={globalStyles.icon}
+                                icon={faSignOut}
+                            />
+                            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Logout</Text>
+                        </Pressable>
+                    </Animatable.View>
                 </SafeAreaView>
             </ScrollView>
     )

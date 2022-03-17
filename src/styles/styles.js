@@ -61,6 +61,21 @@ const globalStyles = StyleSheet.create({
     lightGreen: {
         backgroundColor: '#B7DCCC',
     },
+    white: {
+        backgroundColor: '#FFF'
+    },
+    ccOlive: {
+        backgroundColor: '#796D00'
+    },
+    ccGreen: {
+        backgroundColor: '#3A6621'
+    },
+    ccBrown: {
+        backgroundColor: '#AE8103'
+    },
+    ccDark: {
+        backgroundColor: '#3E3C02'
+    },
     flex: {
         flex: 1
     }

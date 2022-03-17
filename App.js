@@ -15,8 +15,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/components/Login';
 import AdminMainScreen from './src/components/AdminMainScreen';
 import Customers from './src/components/Customers';
-import Cupboard from './src/components/Cupboard';
+import Cupboard from './src/screens/Cupboard';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import NewDelivery from './src/screens/NewDelivery';
+import NewReport from './src/screens/NewReport';
 
 
 const Stack = createStackNavigator();
@@ -64,6 +66,22 @@ const App = () => {
                 component={Customers}
                 options={{
                   title: 'Manage Users',
+                  headerShown: true
+                }}
+            />
+            <Stack.Screen 
+                name='NewDelivery'
+                component={NewDelivery}
+                options={{
+                  title: 'Community Cupboard',
+                  headerShown: true
+                }}
+            />
+            <Stack.Screen 
+                name='NewReport'
+                component={NewReport}
+                options={{
+                  title: 'New Report',
                   headerShown: true
                 }}
             />

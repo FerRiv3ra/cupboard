@@ -6,8 +6,9 @@ import { SafeAreaView, Text, View, StyleSheet, Pressable, ScrollView } from 'rea
 import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
 
+import * as Animatable from 'react-native-animatable';
+
 const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromUsers}) => {
-    console.log(fromUsers);
     const FromCus = fromUsers === undefined ? false : true;
     const { child, customer_id, name, noPeople, uid, phone } = (!FromCus ? userLogged['user'] : fromUsers.user);
     const logoFromFile = require('../assets/logovc.png');
@@ -24,7 +25,12 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromU
     return (
         <SafeAreaView style={[globalStyles.flex, globalStyles.lightGreen]}>
             <ScrollView>
-                <View style={styles.qrCode}>
+                <Animatable.View 
+                    style={styles.qrCode}
+                    animation={'bounceIn'}
+                    duration={2000}
+                    delay={300}
+                >
                     {uid !== '' && <QRCode
                         color='#4C5D23'
                         backgroundColor='#FFF'
@@ -33,8 +39,13 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromU
                         logoSize={60}
                         size={250}
                     />}
-                </View>
-                <View style={[globalStyles.shadow, styles.info]}>
+                </Animatable.View>
+                <Animatable.View 
+                    style={[globalStyles.shadow, styles.info]}
+                    animation={'bounceIn'}
+                    duration={2000}
+                    delay={300}
+                >
                     <Text style={styles.title}>Name: {''}
                         <Text style={styles.textInfo}>{name}</Text>
                     </Text>
@@ -50,17 +61,23 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromU
                     <Text style={styles.title}>Phone: {''}
                         <Text style={styles.textInfo}>{phone ?? ''}</Text>
                     </Text>
-                </View>
-                <Pressable
-                    style={[globalStyles.button, globalStyles.green, {marginHorizontal: 30}]}
-                    onLongPress={logout}
+                </Animatable.View>
+                <Animatable.View
+                    animation={'bounceInUp'}
+                    duration={3000}
+                    delay={700}
                 >
-                    <FontAwesomeIcon 
-                        style={globalStyles.icon}
-                        icon={faSignOut}
-                    />
-                    <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>{ FromCus ? ' Exit' : ' Logout'}</Text>
-                </Pressable>
+                    <Pressable
+                        style={[globalStyles.button, globalStyles.green, {marginHorizontal: 30}]}
+                        onLongPress={logout}
+                    >
+                        <FontAwesomeIcon 
+                            style={globalStyles.icon}
+                            icon={faSignOut}
+                        />
+                        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>{ FromCus ? ' Exit' : ' Logout'}</Text>
+                    </Pressable>
+                </Animatable.View>
             </ScrollView>
         </SafeAreaView>
     )
