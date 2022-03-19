@@ -46,6 +46,7 @@ const WelcomeScreen = () => {
                     animation={'rubberBand'}
                     duration={3000}
                     iterationCount={2}
+                    style={{marginBottom: 10}}
                 >
                     <Text style={styles.title}>Community Cupboard</Text>
                     <Text style={styles.subtitle}>Opening hours</Text>

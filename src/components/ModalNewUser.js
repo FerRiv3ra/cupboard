@@ -2,7 +2,7 @@ import { Alert, View, Text, Modal, Pressable, SafeAreaView, ScrollView, StyleShe
 import React, { useState, useEffect } from 'react';
 import globalStyles from '../styles/styles';
 import { RadioGroup } from 'react-native-radio-buttons-group';
-import { radioButtonsDataChild, radioButtonsDataNU, radioWithChild } from '../helpers/radioButtonsData';
+import { radioButtonsDataChild, radioButtonsDataNU, radioWithChild, resetDataChild, resetDataNU, resetDataWithChild } from '../helpers/radioButtonsData';
 
 import FormUser from './FormUser';
 
@@ -33,7 +33,6 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             setName(userE.name)
             setNoPeople(userE.noPeople.toString())
             setDob(userE.dob)
-            setChild(userE.child)
             setAddress(userE.address)
             setPostcode(userE.postcode)
             setPhone(userE.phone)
@@ -47,10 +46,10 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             const [d, m, y] = userE.dob.split('/');
             setDate(new Date(`${y}-${m}-${d}`));
 
-            if(child){
-                setRadioChild(radioWithChild);
+            if(userE.child){
+                handleRadioChild(radioWithChild);
             }else{
-                setRadioChild(radioButtonsDataChild);
+                handleRadioChild(radioButtonsDataChild);
             }
         }
     }, [userE]);
@@ -58,22 +57,28 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
 
     const handleRadio = (arrRbts) => {
         setRadioButtons(arrRbts);
-        setIsAdmin(!isAdmin);
         
         if(!arrRbts[0].selected){
             setRole('ADMIN_ROLE')
             setPassword('')
             setConfirmPass('')
+            setIsAdmin(true)
         }else{
             setRole('USER_ROLE')
             setPassword('abc123')
             setConfirmPass('abc123')
+            setIsAdmin(false)
         }
     }
 
     const handleRadioChild = (arrRbtsC) => {
         setRadioChild(arrRbtsC);
-        setChild(!child);
+        
+        if(!arrRbtsC[0].selected){
+            setChild(true)
+        }else{
+            setChild(false)
+        }
     }
 
     const handleDate = (selectedDate) => {
@@ -94,14 +99,16 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         setConfirmPass('');
         setNoPeople('1');
         setDob('');
-        setChild(false);
         setAddress('');
         setPostcode('');
         setPhone('');
         setEmail('');
         setRole('');
-        setRadioChild(radioButtonsDataChild);
-        setRadioButtons(radioButtonsDataNU);
+        resetDataChild();
+        handleRadioChild(radioButtonsDataChild);
+        resetDataNU();
+        handleRadio(radioButtonsDataNU);
+        resetDataWithChild();
         setUid('');
     }
 
@@ -139,7 +146,11 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
                 return;
             }
             if(uid !== ''){
-                Alert.alert('User edited', `User with customer ID ${userE.customer_id} modified`)
+                if(userE.role === 'ADMIN_ROLE'){
+                    Alert.alert('User edited', `User ${userE.name} modified`)
+                }else{
+                    Alert.alert('User edited', `User with customer ID ${userE.customer_id} modified`)
+                }
             }else if(userCreated.uid){
                 if(userCreated.role === 'ADMIN_ROLE'){
                     Alert.alert('User created', 'New admin created');
@@ -226,9 +237,6 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
                             handleCreate={handleCreate}
                             isAdmin={isAdmin}
                             radioChild={radioChild}
-                            child={child}
-                            setChild={setChild}
-                            setRadioChild={setRadioChild}
                             uid={uid}
                         />
                     </View>

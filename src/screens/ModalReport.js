@@ -35,10 +35,10 @@ const ModalReport = ({data = [], resetData, startDate, finalDate}) => {
                     delay={1000}
                 >
                     <Text style={styles.label}>Start date: 
-                        <Text style={styles.info}> {`${startDate.toLocaleString().split(',')[0]}`}</Text>
+                        <Text style={styles.info}> {`${startDate.toDateString()}`}</Text>
                     </Text>
                     <Text style={styles.label}>Final date: 
-                        <Text style={styles.info}> {`${finalDate.toLocaleString().split(',')[0]}`}</Text>
+                        <Text style={styles.info}> {`${finalDate.toDateString()}`}</Text>
                     </Text>
                     <Text style={styles.label}>Total people: 
                         <Text style={styles.info}> {`${people}`}</Text>
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
         fontWeight: '800'
     },
     card: {
-        marginHorizontal: 30,
         padding: 20,
         borderRadius: 20,
         backgroundColor: '#FFF'

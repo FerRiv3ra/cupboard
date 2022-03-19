@@ -10,6 +10,7 @@ const radioButtonsData = [{
     selected: false
 }];
 
+
 const radioButtonsDataNU = [{
     id: '1', 
     label: 'CUSTOMER',
@@ -56,11 +57,29 @@ const handleRadioChild = (arrRbtsC, setRadioChild, setChild, child) => {
     setChild(!child);
 }
 
+const resetDataNU = () => {
+    radioButtonsDataNU[0].selected = true;
+    radioButtonsDataNU[1].selected = false;
+}
+
+const resetDataChild = () => {
+    radioButtonsDataChild[0].selected = true;
+    radioButtonsDataChild[1].selected = false;
+}
+
+const resetDataWithChild = () => {
+    radioWithChild[0].selected = false;
+    radioWithChild[1].selected = true;
+}
+
 export {
     radioButtonsData,
     radioButtonsDataNU,
     handleRadio,
     radioButtonsDataChild,
     handleRadioChild,
-    radioWithChild
+    radioWithChild,
+    resetDataNU,
+    resetDataChild,
+    resetDataWithChild
 }

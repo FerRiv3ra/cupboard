@@ -30,10 +30,7 @@ const FormUser = (props) => {
         handleRadioChild, 
         handleCreate, 
         isAdmin, 
-        setChild, 
-        child, 
         radioChild, 
-        setRadioChild,
         uid
     } = props;
 
