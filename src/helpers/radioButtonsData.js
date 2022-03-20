@@ -62,6 +62,11 @@ const resetDataNU = () => {
     radioButtonsDataNU[1].selected = false;
 }
 
+const resetRadioData = () => {
+    radioButtonsData[0].selected = true;
+    radioButtonsData[1].selected = false;
+}
+
 const resetDataChild = () => {
     radioButtonsDataChild[0].selected = true;
     radioButtonsDataChild[1].selected = false;
@@ -81,5 +86,6 @@ export {
     radioWithChild,
     resetDataNU,
     resetDataChild,
-    resetDataWithChild
+    resetDataWithChild,
+    resetRadioData
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 
 import RadioGroup from 'react-native-radio-buttons-group';
@@ -6,11 +6,23 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import AsAdmin from './AsAdmin';
 import AsUser from './AsUser';
-import { handleRadio, radioButtonsData } from '../helpers/radioButtonsData';
+import { radioButtonsData, resetRadioData } from '../helpers/radioButtonsData';
 
 const Login = () => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsData);
     const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        return () =>{
+            resetRadioData();
+            handleRadio(radioButtonsData);
+        }
+    }, []);
+
+    const handleRadio = (arrRbts) => {
+        setRadioButtons(arrRbts);
+        setIsAdmin(radioButtonsData[1].selected);
+    }
 
     return (
         <SafeAreaView style={styles.container}>
