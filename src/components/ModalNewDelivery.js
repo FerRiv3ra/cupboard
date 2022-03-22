@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Alert, TextInput, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Alert, TextInput, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -11,7 +11,9 @@ import { useNavigation } from '@react-navigation/native';
 
 const ModalNewDelivery = ({uid, resetData}) => {
   const [user, setUser] = useState({});
-  const [totalItems, setTotalItems] = useState('0');
+  const [totalItems, setTotalItems] = useState('');
+  const [itemsPU, setItemsPU] = useState('');
+  const [itemsChild, setItemsChild] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation();
@@ -23,6 +25,15 @@ const ModalNewDelivery = ({uid, resetData}) => {
 
   async function fetchData(){
     if(uid !== ''){
+        const myRegExp = /^[a-f\d]{24}$/i;
+
+        if(!uid.match(myRegExp)){
+            Alert.alert('Error', 'No valid QR code', [
+                {text: 'OK', onPress: () => resetData()},
+            ]);
+            return;
+        }
+
         let response = await fetch(`https://grubhubbackend.herokuapp.com/api/users/${uid}`);
             response = await response.json()
         
@@ -56,9 +67,11 @@ const ModalNewDelivery = ({uid, resetData}) => {
         Alert.alert('Error', 'Total items is required');
     }
 
+    const extra = ((itemsPU === '' ? 0 : Number(itemsPU)) + (itemsChild === '' ? 0 : Number(itemsChild)));
+
     const token = await AsyncStorage.getItem('token');
     const data = {
-        amount: Number(totalItems),
+        amount: Number(totalItems) + extra,
         customer_id: user.customer_id
     }
 
@@ -95,7 +108,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
             size="large"
         />
         :
-        <View style={globalStyles.view}>
+        <SafeAreaView style={globalStyles.view}>
             <Pressable 
                 style={[styles.button, globalStyles.orange]}
                 onPress={() => resetData()}
@@ -103,10 +116,9 @@ const ModalNewDelivery = ({uid, resetData}) => {
                 <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>X Cancel</Text>
             </Pressable>
             <View style={[styles.info, globalStyles.shadow]}>
-                <Text style={styles.title}>Customer ID: <Text style={styles.label}>{user.customer_id}</Text></Text>
+                <Text style={styles.title}><Text style={styles.label}>{user.name}</Text></Text>
                 <Text style={styles.txt}>
-                <Text style={styles.label}>{user.name} </Text>
-                can take {15 + (Number(user.noPeople) - 1) * 3} items and
+                Can take {15 + (Number(user.noPeople) - 1) * 3} items and
                 3 additional for personal use
                 </Text>
                 <Text style={styles.txt}>This household {!user.child && 'don\'t'} have childs{user.child ? ' in that case, can take 3 additional items for childs' : '.'}
@@ -117,12 +129,36 @@ const ModalNewDelivery = ({uid, resetData}) => {
             </View>
             <TextInput 
                 style={globalStyles.input}
-                placeholder='Total items'
+                placeholder='Total general items'
                 keyboardType='number-pad'
                 placeholderTextColor={'#666'}
                 onChangeText={setTotalItems}
                 value={totalItems}
+                textAlign={'center'}
+                maxLength={2}
             /> 
+            <TextInput 
+                style={[globalStyles.input, {marginTop: 10}]}
+                placeholder='Total personal items'
+                keyboardType='number-pad'
+                placeholderTextColor={'#666'}
+                onChangeText={setItemsPU}
+                value={itemsPU}
+                textAlign={'center'}
+                maxLength={1}
+            /> 
+            { user.child &&
+                <TextInput 
+                    style={[globalStyles.input, {marginTop: 10}]}
+                    placeholder='Total child items'
+                    keyboardType='number-pad'
+                    placeholderTextColor={'#666'}
+                    onChangeText={setItemsChild}
+                    value={itemsChild}
+                    textAlign={'center'}
+                    maxLength={1}
+                />
+            }
             <Pressable 
                 style={[styles.button, globalStyles.green]}
                 onPress={() => handleSubmit()}
@@ -133,7 +169,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
                 />
                 <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Save</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
       }
     </KeyboardAwareScrollView>
   )

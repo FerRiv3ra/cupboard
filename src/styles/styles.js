@@ -76,6 +76,9 @@ const globalStyles = StyleSheet.create({
     ccDark: {
         backgroundColor: '#3E3C02'
     },
+    gray: {
+        backgroundColor: '#555'
+    },
     flex: {
         flex: 1
     }

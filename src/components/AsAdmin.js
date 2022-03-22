@@ -11,12 +11,16 @@ import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 const AsAdmin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigation = useNavigation();
 
     const handleLogin = async () => {
+        setIsLoading(true);
         if([email, password].includes('')){
             Alert.alert('Error', 'Email and password are required');
+            setIsLoading(false);
+            return;
         }
 
         const userLogin = {
@@ -38,6 +42,7 @@ const AsAdmin = () => {
 
             if(errors !== undefined){
                 Alert.alert('Error', errors[0]['msg']);
+                setIsLoading(false);
                 return;
             }
 
@@ -45,7 +50,7 @@ const AsAdmin = () => {
 
             setEmail('');
             setPassword('');
-
+            setIsLoading(false);
             navigation.navigate('AdminMainScreen');
         } catch (error) {
             console.log('Error', error);
@@ -74,8 +79,9 @@ const AsAdmin = () => {
                 value={password}
             /> 
             <Pressable
-                style={[globalStyles.button, globalStyles.orange]}
+                style={[globalStyles.button, isLoading ? globalStyles.gray : globalStyles.orange]}
                 onPress={handleLogin}
+                disabled={isLoading}
             >
                 <FontAwesomeIcon 
                     style={[globalStyles.icon, {color: '#000'}]}

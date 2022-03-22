@@ -1,7 +1,7 @@
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useState } from 'react';
-import { Text, View, TextInput, StyleSheet, Pressable, Alert, Modal, SafeAreaView } from 'react-native';
+import { Text, View, TextInput, Pressable, Alert, Modal } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import globalStyles from '../styles/styles';
 import ModalUser from './ModalUser';
@@ -19,6 +19,7 @@ const AsUser = () => {
     const [customerId, setCustomerId] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [userLogged, setUserLogged] = useState(userModel);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleDate = (selectedDate) => {
         let date = selectedDate;
@@ -34,8 +35,10 @@ const AsUser = () => {
     }
 
     const handleLogin = async () => {
+        setIsLoading(true);
         if([date, customerId].includes('')){
             Alert.alert('Error', 'Customer ID is required');
+            setIsLoading(false);
             return;
         }
     
@@ -58,11 +61,12 @@ const AsUser = () => {
     
             if(user['msg'] !== undefined){
                 Alert.alert('Error', user['msg']);
+                setIsLoading(false);
                 return;
             }
-    
+            
             setUserLogged(user);
-
+            setIsLoading(false);
             setModalVisible(!modalVisible);
         } catch (error) {
             console.log('Error', error);
@@ -91,8 +95,9 @@ const AsUser = () => {
                 /> 
             </View>
             <Pressable
-                style={[globalStyles.button, globalStyles.orange]}
+                style={[globalStyles.button, isLoading ? globalStyles.gray : globalStyles.orange]}
                 onPress={() => handleLogin()}
+                disabled={isLoading}
             >
                 <FontAwesomeIcon 
                     style={[globalStyles.icon, {color: '#000'}]}

@@ -44,6 +44,7 @@ const FormUser = (props) => {
                 placeholderTextColor={'#666'}
                 onChangeText={setName}
                 value={name}
+                autoCapitalize={'words'}
             /> 
             <Text style={globalStyles.label}>{`Email ${isAdmin ? '(required)' : '(optional)'}`}</Text>
             <TextInput 
@@ -54,6 +55,7 @@ const FormUser = (props) => {
                 placeholderTextColor={'#666'}
                 onChangeText={setEmail}
                 value={email}
+                autoCapitalize={'none'}
             /> 
             {isAdmin && <View>
                 <Text style={globalStyles.label}>Password</Text>
@@ -65,6 +67,7 @@ const FormUser = (props) => {
                     placeholderTextColor={'#666'}
                     onChangeText={setPassword}
                     value={password}
+                    autoCapitalize={'none'}
                 /> 
                 <Text style={globalStyles.label}>Confirm Password</Text>
                 <TextInput 
@@ -75,6 +78,7 @@ const FormUser = (props) => {
                     placeholderTextColor={'#666'}
                     onChangeText={setConfirmPass}
                     value={confirmPass}
+                    autoCapitalize={'none'}
                 />  
             </View>} 
             <Text style={globalStyles.label}>Date of birth</Text>
