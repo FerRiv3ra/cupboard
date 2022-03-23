@@ -21,7 +21,7 @@ const Cupboard = () => {
           delay={500}
         >
           <Image 
-            style={{alignSelf: 'center'}}
+            style={{alignSelf: 'center', height: 250, width: 250}}
             source={require('../assets/ccvc.png')}
           />
         </Animatable.View>

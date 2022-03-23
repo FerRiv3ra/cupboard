@@ -1,8 +1,11 @@
+import React, { useState, useEffect } from 'react';
+import { Text, View, TextInput, Pressable, Alert, Modal } from 'react-native';
+
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useState } from 'react';
-import { Text, View, TextInput, Pressable, Alert, Modal } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import globalStyles from '../styles/styles';
 import ModalUser from './ModalUser';
 
@@ -21,6 +24,19 @@ const AsUser = () => {
     const [userLogged, setUserLogged] = useState(userModel);
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        async function checkSession(){
+            const user = await AsyncStorage.getItem('user');
+            if(user){
+                setUserLogged(JSON.parse(user));
+                setIsLoading(false);
+                setModalVisible(!modalVisible);
+            }
+        }
+
+        checkSession();
+    }, []);
+
     const handleDate = (selectedDate) => {
         let date = selectedDate;
         date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
@@ -28,7 +44,8 @@ const AsUser = () => {
         setDate(date);
     }
 
-    const resetState = () => {
+    const resetState = async () => {
+        await AsyncStorage.removeItem('user');
         setDate(today);
         setCustomerId('');
         setUserLogged(userModel);
@@ -48,22 +65,24 @@ const AsUser = () => {
             customer_id: Number(customerId),
             dob: `${d}/${m}/${y}`
         }
-    
+        
         try {
             const response = await fetch('https://grubhubbackend.herokuapp.com/api/auth/login-user', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
-                  },
+                },
                 body: JSON.stringify(userLogin)
             });
             const user = await response.json();
-    
+            
             if(user['msg'] !== undefined){
                 Alert.alert('Error', user['msg']);
                 setIsLoading(false);
                 return;
             }
+
+            await AsyncStorage.setItem('user', JSON.stringify(user));
             
             setUserLogged(user);
             setIsLoading(false);

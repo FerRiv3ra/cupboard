@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     },
     textName: {
         fontSize: 22,
-        color: '#4b6423',
+        color: '#336210',
         fontWeight: '700',
         textTransform: 'capitalize',
     },

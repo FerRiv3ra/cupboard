@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     info: {
-        color: '#4C5D23',
+        color: '#336210',
         fontSize: 18,
         fontWeight: '800'
     },

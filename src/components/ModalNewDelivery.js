@@ -12,8 +12,6 @@ import { useNavigation } from '@react-navigation/native';
 const ModalNewDelivery = ({uid, resetData}) => {
   const [user, setUser] = useState({});
   const [totalItems, setTotalItems] = useState('');
-  const [itemsPU, setItemsPU] = useState('');
-  const [itemsChild, setItemsChild] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation();
@@ -67,12 +65,11 @@ const ModalNewDelivery = ({uid, resetData}) => {
         Alert.alert('Error', 'Total items is required');
     }
 
-    const extra = ((itemsPU === '' ? 0 : Number(itemsPU)) + (itemsChild === '' ? 0 : Number(itemsChild)));
-
     const token = await AsyncStorage.getItem('token');
     const data = {
-        amount: Number(totalItems) + extra,
-        customer_id: user.customer_id
+        amount: Number(totalItems),
+        customer_id: user.customer_id,
+        uid
     }
 
     try {
@@ -118,18 +115,18 @@ const ModalNewDelivery = ({uid, resetData}) => {
             <View style={[styles.info, globalStyles.shadow]}>
                 <Text style={styles.title}><Text style={styles.label}>{user.name}</Text></Text>
                 <Text style={styles.txt}>
-                Can take {15 + (Number(user.noPeople) - 1) * 3} items and
-                3 additional for personal use
+                {user.noPeople === 1 ? 'Single' : 'Couple'} {' '} 
+                {user.child_cant === 0 ? 'without children' : user.child_cant === 1 ? 'with 1 child' :
+                `with ${user.child_cant} children`
+                }
                 </Text>
-                <Text style={styles.txt}>This household {!user.child && 'don\'t'} have childs{user.child ? ' in that case, can take 3 additional items for childs' : '.'}
-                </Text>
-                <Text style={styles.txt}>Total items household can carry 
-                <Text style={styles.label}> {user.child ? (21 + (Number(user.noPeople) - 1) * 3) : (18 + (Number(user.noPeople) - 1) * 3)}</Text>
-                </Text>
+            <Text style={styles.txt}>{user.noPeople === 1 ? '15 items, 3 toiletries.' : '20 items, 6 toiletries'}</Text>
+            <Text style={styles.txt}>Last visit: {user.last === '' ? 'First visit' : user.last}</Text>
+            <Text style={styles.txt}>Total visits: {user.visits}</Text>
             </View>
             <TextInput 
                 style={globalStyles.input}
-                placeholder='Total general items'
+                placeholder='Total items'
                 keyboardType='number-pad'
                 placeholderTextColor={'#666'}
                 onChangeText={setTotalItems}
@@ -137,28 +134,6 @@ const ModalNewDelivery = ({uid, resetData}) => {
                 textAlign={'center'}
                 maxLength={2}
             /> 
-            <TextInput 
-                style={[globalStyles.input, {marginTop: 10}]}
-                placeholder='Total personal items'
-                keyboardType='number-pad'
-                placeholderTextColor={'#666'}
-                onChangeText={setItemsPU}
-                value={itemsPU}
-                textAlign={'center'}
-                maxLength={1}
-            /> 
-            { user.child &&
-                <TextInput 
-                    style={[globalStyles.input, {marginTop: 10}]}
-                    placeholder='Total child items'
-                    keyboardType='number-pad'
-                    placeholderTextColor={'#666'}
-                    onChangeText={setItemsChild}
-                    value={itemsChild}
-                    textAlign={'center'}
-                    maxLength={1}
-                />
-            }
             <Pressable 
                 style={[styles.button, globalStyles.green]}
                 onPress={() => handleSubmit()}
@@ -169,6 +144,10 @@ const ModalNewDelivery = ({uid, resetData}) => {
                 />
                 <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Save</Text>
             </Pressable>
+            <View style={{marginTop: 20}}>
+                <Text style={styles.txt}>* Period products are available whenever they are needed, no restrictions.</Text>
+                <Text style={styles.txt}>* Fruit and vegetables are given as extras as and when available.</Text>
+            </View>
         </SafeAreaView>
       }
     </KeyboardAwareScrollView>

@@ -7,6 +7,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import AsAdmin from './AsAdmin';
 import AsUser from './AsUser';
 import { radioButtonsData, resetRadioData } from '../helpers/radioButtonsData';
+import globalStyles from '../styles/styles';
 
 const Login = () => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsData);
@@ -25,7 +26,7 @@ const Login = () => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, globalStyles.lightGreen]}>
             <KeyboardAwareScrollView>          
                 <View style={styles.containerLogo}>
                     <Image
@@ -52,7 +53,6 @@ const Login = () => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#B7DCCC',
         justifyContent: 'center',
         flex: 1
     },
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     logo: {
-        width: 150,
-        height: 150,
+        width: 180,
+        height: 180,
     },
     view: {
         alignItems: 'center'

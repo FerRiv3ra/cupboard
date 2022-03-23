@@ -2,13 +2,21 @@ import { Alert, View, Text, Modal, Pressable, SafeAreaView, ScrollView, StyleShe
 import React, { useState, useEffect } from 'react';
 import globalStyles from '../styles/styles';
 import { RadioGroup } from 'react-native-radio-buttons-group';
-import { radioButtonsDataChild, radioButtonsDataNU, radioWithChild, resetDataChild, resetDataNU, resetDataWithChild } from '../helpers/radioButtonsData';
+import { radioButtonsDataChild, 
+    radioButtonsDataNU, 
+    radioWithChild, 
+    resetDataChild, 
+    resetDataNU,
+    resetDataType,
+    radioType, 
+    resetDataWithChild } from '../helpers/radioButtonsData';
 
 import FormUser from './FormUser';
 
 const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
     const [radioButtons, setRadioButtons] = useState(radioButtonsDataNU);
     const [radioChild, setRadioChild] = useState(radioButtonsDataChild);
+    const [radioDataType, setRadioDataType] = useState(radioType);
     const [isAdmin, setIsAdmin] = useState(false);
 
     const today = new Date();
@@ -21,7 +29,7 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
     const [noPeople, setNoPeople] = useState('1');
     const [dob, setDob] = useState('');
     const [child, setChild] = useState(false);
-    const [address, setAddress] = useState('');
+    const [childCant, setChildCant] = useState('');
     const [postcode, setPostcode] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -33,7 +41,6 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             setName(userE.name)
             setNoPeople(userE.noPeople.toString())
             setDob(userE.dob)
-            setAddress(userE.address)
             setPostcode(userE.postcode)
             setPhone(userE.phone)
             setEmail(userE.email)
@@ -52,7 +59,7 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
                 handleRadioChild(radioButtonsDataChild);
             }
         }
-    }, [userE]);
+    }, []);
     
 
     const handleRadio = (arrRbts) => {
@@ -81,6 +88,16 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         }
     }
 
+    const handleRadioType = (arrRbtDT) => {
+        setRadioDataType(arrRbtDT);
+
+        if(arrRbtDT[0].selected){
+            setNoPeople('1')
+        }else{
+            setNoPeople('2')
+        }
+    }
+
     const handleDate = (selectedDate) => {
         let date = selectedDate;
         date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
@@ -99,7 +116,6 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         setConfirmPass('');
         setNoPeople('1');
         setDob('');
-        setAddress('');
         setPostcode('');
         setPhone('');
         setEmail('');
@@ -108,7 +124,10 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         handleRadioChild(radioButtonsDataChild);
         resetDataNU();
         handleRadio(radioButtonsDataNU);
+        resetDataType();
+        handleRadioType(radioDataType);
         resetDataWithChild();
+        setChildCant('');
         setUid('');
     }
 
@@ -118,10 +137,10 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             noPeople: Number(noPeople),
             dob,
             child,
-            address,
+            child_cant: Number(childCant),
             postcode: postcode.trim(),
             phone,
-            email,
+            email: email.trim(),
             role
         }
 
@@ -172,13 +191,18 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             return;
         }
 
-        if(uid === '' && [name, password, confirmPass, dob, address, postcode].includes('')){
+        if(uid === '' && [name, password, confirmPass, dob, postcode].includes('')){
             Alert.alert('Error', 'Required fields are empty');
             return;
         }
 
         if(password !== confirmPass){
             Alert.alert('Error', 'The passwords are diferent');
+            return;
+        }
+
+        if(child && childCant === ''){
+            Alert.alert('Error', 'Number of children is required');
             return;
         }
 
@@ -225,18 +249,20 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
                             date={date}
                             today={today}
                             handleDate={handleDate}
-                            setAddress={setAddress}
-                            address={address}
                             setPostcode={setPostcode}
                             postcode={postcode}
                             phone={phone}
                             setPhone={setPhone}
                             setNoPeople={setNoPeople}
                             noPeople={noPeople}
-                            handleRadioChild={handleRadioChild}
                             handleCreate={handleCreate}
                             isAdmin={isAdmin}
                             radioChild={radioChild}
+                            handleRadioChild={handleRadioChild}
+                            radioDataType={radioDataType}
+                            handleRadioType={handleRadioType}
+                            setChildCant={setChildCant}
+                            childCant={childCant}
                             uid={uid}
                         />
                     </View>

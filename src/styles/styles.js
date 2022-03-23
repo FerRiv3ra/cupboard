@@ -17,7 +17,7 @@ const globalStyles = StyleSheet.create({
     },  
     button:{
         marginVertical: 40,
-        paddingVertical: 20,
+        paddingVertical: 15,
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
@@ -56,7 +56,7 @@ const globalStyles = StyleSheet.create({
         backgroundColor: '#ED7619',
     },
     green: {
-        backgroundColor: '#4C5D23',
+        backgroundColor: '#336210',
     },
     lightGreen: {
         backgroundColor: '#B7DCCC',

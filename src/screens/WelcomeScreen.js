@@ -22,6 +22,7 @@ const WelcomeScreen = () => {
                     style={styles.containerImg}
                 >
                     <Image 
+                        style={{height: 250, width: 250}}
                         source={require('../assets/logovc.png')}
                     />
                 </Animatable.View>
@@ -66,10 +67,10 @@ const styles = StyleSheet.create({
     },
     containerImg: {
         alignSelf: 'center',
-        marginTop: 50
+        marginTop: 50,
     },
     title: {
-        color: '#3A6621',
+        color: '#336210',
         textTransform: 'uppercase',
         textAlign: 'center',
         fontSize: 18,

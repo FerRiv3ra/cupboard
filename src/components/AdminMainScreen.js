@@ -93,7 +93,9 @@ const AdminMainScreen = () => {
 const styles = StyleSheet.create({
     img: {
         alignSelf: 'center',
-        marginTop: 30
+        marginTop: 30,
+        height: 180,
+        width: 180
     },
     container: {
         marginHorizontal: 30,

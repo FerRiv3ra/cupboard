@@ -19,8 +19,6 @@ const FormUser = (props) => {
         date, 
         today, 
         handleDate, 
-        setAddress, 
-        address, 
         setPostcode, 
         postcode, 
         phone, 
@@ -31,7 +29,11 @@ const FormUser = (props) => {
         handleCreate, 
         isAdmin, 
         radioChild, 
-        uid
+        uid,
+        radioDataType,
+        handleRadioType,
+        setChildCant,
+        childCant
     } = props;
 
     return (
@@ -57,7 +59,7 @@ const FormUser = (props) => {
                 value={email}
                 autoCapitalize={'none'}
             /> 
-            {isAdmin && <View>
+            {isAdmin ? <View>
                 <Text style={globalStyles.label}>Password</Text>
                 <TextInput 
                     style={globalStyles.input}
@@ -80,7 +82,41 @@ const FormUser = (props) => {
                     value={confirmPass}
                     autoCapitalize={'none'}
                 />  
-            </View>} 
+            </View> : 
+            <View>
+                <View style={{alignItems: 'center'}} >
+                    <Text style={[globalStyles.label, globalStyles.textCenter]}>Kind of household</Text>
+                    <RadioGroup
+                        radioButtons={radioDataType} 
+                        layout='row'
+                        onPress={(arrRbtsDT) => handleRadioType(arrRbtsDT)} 
+                    />
+                </View>
+                <View style={{alignItems: 'center'}} >
+                    <Text style={[globalStyles.label, globalStyles.textCenter]}>Children in household</Text>
+                    <RadioGroup
+                        radioButtons={radioChild} 
+                        layout='row'
+                        onPress={(arrRbtsC) => handleRadioChild(arrRbtsC)} 
+                    />
+                </View>
+                {radioChild[1].selected && 
+                    <View>
+                        <Text style={[globalStyles.label, globalStyles.textCenter]}>How many children?</Text>
+                        <TextInput 
+                            style={globalStyles.input}
+                            placeholder='How many children?'
+                            keyboardType='number-pad'
+                            placeholderTextColor={'#666'}
+                            maxLength={1}
+                            textAlign={'center'}
+                            onChangeText={setChildCant}
+                            value={childCant}
+                        />
+                    </View>
+                }
+            </View>
+            } 
             <Text style={globalStyles.label}>Date of birth</Text>
             <View style={globalStyles.dateContainer}>
             <DatePicker 
@@ -91,16 +127,6 @@ const FormUser = (props) => {
                 onDateChange={(selectedDate) => handleDate(selectedDate)}
             /> 
             </View>
-            <Text style={globalStyles.label}>Address (required)</Text>
-            <TextInput 
-                style={globalStyles.input}
-                placeholder='Address'
-                keyboardType='default'
-                textContentType='addressCity'
-                placeholderTextColor={'#666'}
-                onChangeText={setAddress}
-                value={address}
-            /> 
             <Text style={globalStyles.label}>Postcode (required)</Text>
             <TextInput 
                 style={globalStyles.input}
@@ -120,28 +146,7 @@ const FormUser = (props) => {
                 placeholderTextColor={'#666'}
                 onChangeText={setPhone}
                 value={phone}
-            /> 
-            {!isAdmin && 
-                <View>
-                    <Text style={globalStyles.label}>People in household</Text>
-                    <TextInput 
-                        style={globalStyles.input}
-                        placeholder='People in household'
-                        keyboardType='number-pad'
-                        placeholderTextColor={'#666'}
-                        onChangeText={setNoPeople}
-                        value={noPeople}
-                    /> 
-                    <View style={{alignSelf: 'center'}} >
-                        <Text style={[globalStyles.label, globalStyles.textCenter]}>Children in family</Text>
-                        <RadioGroup
-                            radioButtons={radioChild} 
-                            layout='row'
-                            onPress={(arrRbtsC) => handleRadioChild(arrRbtsC)} 
-                        />
-                    </View>
-                </View>
-            }
+            />
             <Pressable
                 style={[globalStyles.button, globalStyles.green]}
                 onPress={handleCreate}
