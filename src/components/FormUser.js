@@ -23,8 +23,6 @@ const FormUser = (props) => {
         postcode, 
         phone, 
         setPhone, 
-        setNoPeople, 
-        noPeople, 
         handleRadioChild, 
         handleCreate, 
         isAdmin, 

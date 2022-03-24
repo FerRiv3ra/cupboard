@@ -10,7 +10,7 @@ import * as Animatable from 'react-native-animatable';
 
 const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromUsers}) => {
     const FromCus = fromUsers === undefined ? false : true;
-    const { child, child_cant, customer_id, name, noPeople, uid, phone } = (!FromCus ? userLogged['user'] : fromUsers.user);
+    const { child, child_cant, customer_id, name, single, uid, phone, email = '' } = (!FromCus ? userLogged['user'] : fromUsers.user);
     const logoFromFile = require('../assets/logovc.png');
 
     const logout = () => {
@@ -54,11 +54,14 @@ const ModalUser = ({userLogged, setModalVisible, modalVisible, resetState, fromU
                         <Text style={styles.textInfo}>{child ? child_cant : 'No'}</Text>
                     </Text>
                     <Text style={styles.title}>Kind of household: {''}
-                        <Text style={styles.textInfo}>{noPeople === 1 ? 'Single' : 'Couple'}</Text>
+                        <Text style={styles.textInfo}>{single ? 'Single' : 'Couple'}</Text>
                     </Text>
-                    <Text style={styles.title}>Phone: {''}
+                    {phone && <Text style={styles.title}>Phone: {''}
                         <Text style={styles.textInfo}>{phone ?? ''}</Text>
-                    </Text>
+                    </Text>}
+                    {!email.includes('@default') && <Text style={styles.title}>Email: {''}
+                        <Text style={styles.email}>{email}</Text>
+                    </Text>}
                 </Animatable.View>
                 <Animatable.View
                     animation={'bounceInUp'}
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
     },
     info: {
         marginHorizontal: 30,
-        padding: 20,
+        padding: 15,
         borderRadius: 20,
         backgroundColor: '#FFF'
     },
@@ -115,6 +118,9 @@ const styles = StyleSheet.create({
     textInfo: {
         textTransform: 'capitalize',
         fontWeight: '800',
+        color: '#336210'
+    },
+    email: {
         color: '#336210'
     }
 })

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
 import globalStyles from '../styles/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';

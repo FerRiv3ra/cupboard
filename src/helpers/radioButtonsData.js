@@ -22,6 +22,18 @@ const radioType = [{
     selected: false
 }];
 
+const radioTypeCouple = [{
+    id: '1', 
+    label: 'SINGLE',
+    value: 'single',
+    selected: false
+}, {
+    id: '2',
+    label: 'COUPLE',
+    value: 'couple',
+    selected: true
+}];
+
 const radioButtonsDataNU = [{
     id: '1', 
     label: 'CUSTOMER',
@@ -93,6 +105,11 @@ const resetDataType = () => {
     radioType[1].selected = false;
 }
 
+const resetDataTypeCouple = () => {
+    radioTypeCouple[0].selected = false;
+    radioTypeCouple[1].selected = true;
+}
+
 export {
     radioButtonsData,
     radioButtonsDataNU,
@@ -105,5 +122,7 @@ export {
     resetDataWithChild,
     resetRadioData,
     radioType,
-    resetDataType
+    resetDataType,
+    radioTypeCouple,
+    resetDataTypeCouple
 }

@@ -82,8 +82,8 @@ const Customers = () => {
     }
 
     const resetState = () => {
-        setModalVisibleUser(false);
         setUser({});
+        setModalVisibleUser(false);
     }
 
     const userDelete = (uid) => {

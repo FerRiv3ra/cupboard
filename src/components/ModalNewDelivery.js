@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 const ModalNewDelivery = ({uid, resetData}) => {
   const [user, setUser] = useState({});
   const [totalItems, setTotalItems] = useState('');
+  const [toiletries, setToiletries] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation();
@@ -63,12 +64,29 @@ const ModalNewDelivery = ({uid, resetData}) => {
   const handleSubmit = async () => {
     if(totalItems === '' || totalItems === '0'){
         Alert.alert('Error', 'Total items is required');
+        return;
+    }
+
+    if(user.single && totalItems > 15){
+        Alert.alert('Error', 'You cannot exceed the total allowable number of items');
+        return;
+    }
+
+    if(!user.single && totalItems > 20){
+        Alert.alert('Error', 'You cannot exceed the total allowable number of items');
+        return;
+    }
+
+    if(Number(toiletries) > user.toiletries){
+        Alert.alert('Error', 'You cannot exceed the total allowable number of toiletries');
+        return;
     }
 
     const token = await AsyncStorage.getItem('token');
     const data = {
-        amount: Number(totalItems),
+        amount: Number(totalItems) + toiletries === '' ? 0 : Number(toiletries),
         customer_id: user.customer_id,
+        cant_toiletries: toiletries === '' ? 0 : Number(toiletries),
         uid
     }
 
@@ -114,15 +132,15 @@ const ModalNewDelivery = ({uid, resetData}) => {
             </Pressable>
             <View style={[styles.info, globalStyles.shadow]}>
                 <Text style={styles.title}><Text style={styles.label}>{user.name}</Text></Text>
-                <Text style={styles.txt}>
-                {user.noPeople === 1 ? 'Single' : 'Couple'} {' '} 
+                <Text style={[styles.txt]}>
+                {user.single ? 'Single' : 'Couple'} {' '} 
                 {user.child_cant === 0 ? 'without children' : user.child_cant === 1 ? 'with 1 child' :
                 `with ${user.child_cant} children`
                 }
                 </Text>
-            <Text style={styles.txt}>{user.noPeople === 1 ? '15 items, 3 toiletries.' : '20 items, 6 toiletries'}</Text>
-            <Text style={styles.txt}>Last visit: {user.last === '' ? 'First visit' : user.last}</Text>
-            <Text style={styles.txt}>Total visits: {user.visits}</Text>
+            <Text style={styles.txt}>{user.single ? 15 : 20} {` items, ${user.toiletries} toiletries.`}</Text>
+            <Text style={styles.txt}><Text style={styles.label}>Last visit:</Text> {user.last === '' ? 'First visit' : user.last}</Text>
+            <Text style={styles.txt}><Text style={styles.label}>Total visits:</Text> {user.visits}</Text>
             </View>
             <TextInput 
                 style={globalStyles.input}
@@ -133,6 +151,16 @@ const ModalNewDelivery = ({uid, resetData}) => {
                 value={totalItems}
                 textAlign={'center'}
                 maxLength={2}
+            /> 
+            <TextInput 
+                style={[globalStyles.input, {marginTop: 10}]}
+                placeholder='Toiletries'
+                keyboardType='number-pad'
+                placeholderTextColor={'#666'}
+                onChangeText={setToiletries}
+                value={toiletries}
+                textAlign={'center'}
+                maxLength={1}
             /> 
             <Pressable 
                 style={[styles.button, globalStyles.green]}
@@ -175,7 +203,8 @@ const styles = StyleSheet.create({
     txt: {
         marginBottom: 10,
         fontSize: 15,
-        fontWeight: '400'
+        fontWeight: '400',
+        textAlign: 'center',
     },
     title: {
         textAlign: 'center',

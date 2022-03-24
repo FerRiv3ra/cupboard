@@ -9,7 +9,9 @@ import { radioButtonsDataChild,
     resetDataNU,
     resetDataType,
     radioType, 
-    resetDataWithChild } from '../helpers/radioButtonsData';
+    resetDataWithChild, 
+    radioTypeCouple,
+    resetDataTypeCouple} from '../helpers/radioButtonsData';
 
 import FormUser from './FormUser';
 
@@ -26,7 +28,7 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('abc123');
     const [confirmPass, setConfirmPass] = useState('abc123');
-    const [noPeople, setNoPeople] = useState('1');
+    const [single, setSingle] = useState(false);
     const [dob, setDob] = useState('');
     const [child, setChild] = useState(false);
     const [childCant, setChildCant] = useState('');
@@ -39,12 +41,12 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         if(userE['uid'] !== undefined){
             setUid(userE.uid)
             setName(userE.name)
-            setNoPeople(userE.noPeople.toString())
             setDob(userE.dob)
             setPostcode(userE.postcode)
             setPhone(userE.phone)
             setEmail(userE.email)
             setRole(userE.role)
+            setChildCant(userE.child_cant.toString())
 
             if(userE.role === 'ADMIN_ROLE'){
                 setIsAdmin(true);
@@ -58,8 +60,16 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
             }else{
                 handleRadioChild(radioButtonsDataChild);
             }
+
+            if(userE.single){
+                handleRadioType(radioType);
+            }else{
+                handleRadioType(radioTypeCouple);
+            }
+        }else{
+            resetData();
         }
-    }, []);
+    }, [userE]);
     
 
     const handleRadio = (arrRbts) => {
@@ -92,9 +102,9 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         setRadioDataType(arrRbtDT);
 
         if(arrRbtDT[0].selected){
-            setNoPeople('1')
+            setSingle(true)
         }else{
-            setNoPeople('2')
+            setSingle(false)
         }
     }
 
@@ -114,7 +124,7 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         setName(''),
         setPassword('');
         setConfirmPass('');
-        setNoPeople('1');
+        setSingle(false);
         setDob('');
         setPostcode('');
         setPhone('');
@@ -125,8 +135,9 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
         resetDataNU();
         handleRadio(radioButtonsDataNU);
         resetDataType();
-        handleRadioType(radioDataType);
+        handleRadioType(radioType);
         resetDataWithChild();
+        resetDataTypeCouple();
         setChildCant('');
         setUid('');
     }
@@ -134,11 +145,11 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
     const sendData = async () => {
         const user = {
             name,
-            noPeople: Number(noPeople),
+            single,
             dob,
             child,
             child_cant: Number(childCant),
-            postcode: postcode.trim(),
+            postcode: postcode.trim().toUpperCase(),
             phone,
             email: email.trim(),
             role
@@ -253,8 +264,8 @@ const ModalNewUser = ({modalVisible, setModalVisible, user: userE}) => {
                             postcode={postcode}
                             phone={phone}
                             setPhone={setPhone}
-                            setNoPeople={setNoPeople}
-                            noPeople={noPeople}
+                            single={single}
+                            setSingle={setSingle}
                             handleCreate={handleCreate}
                             isAdmin={isAdmin}
                             radioChild={radioChild}
