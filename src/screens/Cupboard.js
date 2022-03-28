@@ -11,7 +11,7 @@ const Cupboard = () => {
 
   return (
     <View
-      style={[globalStyles.white, globalStyles.flex, {justifyContent: 'space-around'}]}
+      style={[globalStyles.white, globalStyles.flex, { justifyContent: 'space-around' }]}
     >
       <View
         style={[globalStyles.view]}
@@ -20,8 +20,8 @@ const Cupboard = () => {
           animation={'bounceInDown'}
           delay={500}
         >
-          <Image 
-            style={{alignSelf: 'center', height: 250, width: 250}}
+          <Image
+            style={{ alignSelf: 'center', height: 250, width: 250 }}
             source={require('../assets/ccvc.png')}
           />
         </Animatable.View>
@@ -33,11 +33,11 @@ const Cupboard = () => {
             style={[globalStyles.button, globalStyles.ccGreen]}
             onPress={() => navigation.navigate('NewDelivery')}
           >
-            <FontAwesomeIcon 
-                style={[globalStyles.icon, {color: '#FFF'}]}
-                icon={faHandsHelping}
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#FFF' }]}
+              icon={faHandsHelping}
             />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> New give away</Text>
+            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New give away</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View
@@ -48,11 +48,11 @@ const Cupboard = () => {
             style={[globalStyles.button, globalStyles.ccGreen]}
             onPress={() => navigation.navigate('NewReport')}
           >
-            <FontAwesomeIcon 
-                style={[globalStyles.icon, {color: '#FFF'}]}
-                icon={faFileInvoice}
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#FFF' }]}
+              icon={faFileInvoice}
             />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> New Report</Text>
+            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New Report</Text>
           </Pressable>
         </Animatable.View>
       </View>

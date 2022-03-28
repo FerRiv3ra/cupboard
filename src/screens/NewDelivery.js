@@ -17,13 +17,13 @@ const NewDelivery = () => {
     checkPermission();
   }, []);
 
-  async function checkPermission(){
+  async function checkPermission() {
     const res = await check(Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA);
     setCameraStatus(res);
-    if(res === 'granted'){
+    if (res === 'granted') {
       setCameraPermission(true);
     }
-  } 
+  }
 
   const handleQR = (event) => {
     setUid(event.nativeEvent.codeStringValue);
@@ -36,34 +36,34 @@ const NewDelivery = () => {
   }
 
   return (
-    <View style={!cameraPermission && styles.container }>
-      {!cameraPermission ? 
-        <View style={{marginHorizontal: 30}}>
-           <Permission 
+    <View style={!cameraPermission && styles.container}>
+      {!cameraPermission ?
+        <View style={{ marginHorizontal: 30 }}>
+          <Permission
             cameraStatus={cameraStatus}
             checkPermission={checkPermission}
             setCameraStatus={setCameraStatus}
             setCameraPermission={setCameraPermission}
-          /> 
+          />
         </View> :
         <View>
           <CameraScreen
             scanBarcode={true}
             onReadCode={(event) => handleQR(event)}
-            showFrame={true} 
-            laserColor='red' 
-            frameColor='white' 
+            showFrame={true}
+            laserColor='red'
+            frameColor='white'
             ratioOverlay={['1:1']}
           />
         </View>}
-        <Modal
-          visible={modal}
-          >
-          <ModalNewDelivery 
-            resetData={resetData}
-            uid={uid}
-          />
-        </Modal>
+      <Modal
+        visible={modal}
+      >
+        <ModalNewDelivery
+          resetData={resetData}
+          uid={uid}
+        />
+      </Modal>
     </View>
   )
 }

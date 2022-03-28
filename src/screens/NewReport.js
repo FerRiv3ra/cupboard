@@ -41,7 +41,7 @@ const NewReport = () => {
 
   const handleNewReport = async () => {
     const [ys, ms, ds] = startDate.toISOString().slice(0, 10).split('-');
-    const start = `${ds}/${ms}/${ys}`; 
+    const start = `${ds}/${ms}/${ys}`;
 
     const [yf, mf, df] = finalDate.toISOString().slice(0, 10).split('-');
     const final = `${df}/${mf}/${yf}`;
@@ -63,25 +63,25 @@ const NewReport = () => {
   return (
     <View style={[globalStyles.flex, globalStyles.green]}>
       <View style={[globalStyles.view]}>
-        <Text style={[globalStyles.label, {color: '#FFF'}]}>Start date</Text>
+        <Text style={[globalStyles.label, { color: '#FFF' }]}>Start date</Text>
         <View style={globalStyles.dateContainer}>
-            <DatePicker 
-                androidVariant='nativeAndroid'
-                date={startDate}
-                maximumDate={today}
-                mode='date'
-                onDateChange={(selectedDate) => handleStartDate(selectedDate)}
-            /> 
+          <DatePicker
+            androidVariant='nativeAndroid'
+            date={startDate}
+            maximumDate={today}
+            mode='date'
+            onDateChange={(selectedDate) => handleStartDate(selectedDate)}
+          />
         </View>
-        <Text style={[globalStyles.label, {color: '#FFF'}]}>Final date</Text>
+        <Text style={[globalStyles.label, { color: '#FFF' }]}>Final date</Text>
         <View style={globalStyles.dateContainer}>
-            <DatePicker 
-                androidVariant='nativeAndroid'
-                date={finalDate}
-                maximumDate={today}
-                mode='date'
-                onDateChange={(selectedDate) => handleFinalDate(selectedDate)}
-            /> 
+          <DatePicker
+            androidVariant='nativeAndroid'
+            date={finalDate}
+            maximumDate={today}
+            mode='date'
+            onDateChange={(selectedDate) => handleFinalDate(selectedDate)}
+          />
         </View>
         <Animatable.View
           animation={'bounceIn'}
@@ -92,18 +92,18 @@ const NewReport = () => {
             style={[globalStyles.button, globalStyles.orange]}
             onPress={() => handleNewReport()}
           >
-            <FontAwesomeIcon 
-                style={[globalStyles.icon, {color: '#FFF'}]}
-                icon={faFileInvoice}
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#FFF' }]}
+              icon={faFileInvoice}
             />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> New Report</Text>
+            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New Report</Text>
           </Pressable>
         </Animatable.View>
       </View>
-      <Modal 
+      <Modal
         visible={modal}
       >
-        <ModalReport 
+        <ModalReport
           resetData={resetData}
           data={data}
           startDate={startDate}
