@@ -28,8 +28,8 @@ const FormUser = (props) => {
     isAdmin,
     radioChild,
     uid,
-    radioDataType,
-    handleRadioType,
+    setNoHousehold,
+    noHousehold,
     setChildCant,
     childCant
   } = props;
@@ -82,14 +82,16 @@ const FormUser = (props) => {
         />
       </View> :
         <View>
-          <View style={{ alignItems: 'center' }} >
-            <Text style={[globalStyles.label, globalStyles.textCenter]}>Kind of household</Text>
-            <RadioGroup
-              radioButtons={radioDataType}
-              layout='row'
-              onPress={(arrRbtsDT) => handleRadioType(arrRbtsDT)}
-            />
-          </View>
+          <Text style={[globalStyles.label]}>Number in household</Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder='Number in household'
+            keyboardType='number-pad'
+            placeholderTextColor={'#666'}
+            maxLength={2}
+            onChangeText={setNoHousehold}
+            value={noHousehold}
+          />
           <View style={{ alignItems: 'center' }} >
             <Text style={[globalStyles.label, globalStyles.textCenter]}>Children in household</Text>
             <RadioGroup

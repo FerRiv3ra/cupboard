@@ -37,14 +37,21 @@ const ModalNewDelivery = ({ uid, resetData }) => {
         let response = await fetch(`https://grubhubbackend.herokuapp.com/api/users/${uid}`);
         response = await response.json()
 
-        if (response['errors']) {
+        if(response['errors']) {
           Alert.alert('Error', response['errors'][0].msg, [
             { text: 'OK', onPress: () => resetData() },
           ]);
           return;
         }
 
-        if (response) {
+        if(response.blocked){
+          Alert.alert('Error', 'This user needs to book a review, please contact the staff', [
+            { text: 'OK', onPress: () => resetData() },
+          ]);
+          return;
+        }
+
+        if(response) {
           let canTake = await fetch(`https://grubhubbackend.herokuapp.com/api/deliveries/${response.customer_id}`);
           canTake = await canTake.json();
 

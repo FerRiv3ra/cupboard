@@ -8,10 +8,7 @@ import {
   radioWithChild,
   resetDataChild,
   resetDataNU,
-  resetDataType,
-  radioType,
   resetDataWithChild,
-  radioTypeCouple,
   resetDataTypeCouple
 } from '../helpers/radioButtonsData';
 
@@ -20,7 +17,6 @@ import FormUser from './FormUser';
 const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
   const [radioButtons, setRadioButtons] = useState(radioButtonsDataNU);
   const [radioChild, setRadioChild] = useState(radioButtonsDataChild);
-  const [radioDataType, setRadioDataType] = useState(radioType);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const today = new Date();
@@ -30,7 +26,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('abc123');
   const [confirmPass, setConfirmPass] = useState('abc123');
-  const [single, setSingle] = useState(false);
+  const [noHousehold, setNoHousehold] = useState('');
   const [dob, setDob] = useState('');
   const [child, setChild] = useState(false);
   const [childCant, setChildCant] = useState('');
@@ -49,6 +45,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       setEmail(userE.email)
       setRole(userE.role)
       setChildCant(userE.child_cant.toString())
+      setNoHousehold(userE.no_household.toString())
 
       if (userE.role === 'ADMIN_ROLE') {
         setIsAdmin(true);
@@ -61,12 +58,6 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
         handleRadioChild(radioWithChild);
       } else {
         handleRadioChild(radioButtonsDataChild);
-      }
-
-      if (userE.single) {
-        handleRadioType(radioType);
-      } else {
-        handleRadioType(radioTypeCouple);
       }
     } else {
       resetData();
@@ -100,16 +91,6 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
     }
   }
 
-  const handleRadioType = (arrRbtDT) => {
-    setRadioDataType(arrRbtDT);
-
-    if (arrRbtDT[0].selected) {
-      setSingle(true)
-    } else {
-      setSingle(false)
-    }
-  }
-
   const handleDate = (selectedDate) => {
     let date = selectedDate;
     date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
@@ -124,9 +105,8 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
   const resetData = () => {
     setDate(today);
     setName(''),
-      setPassword('');
+    setPassword('');
     setConfirmPass('');
-    setSingle(false);
     setDob('');
     setPostcode('');
     setPhone('');
@@ -136,20 +116,19 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
     handleRadioChild(radioButtonsDataChild);
     resetDataNU();
     handleRadio(radioButtonsDataNU);
-    resetDataType();
-    handleRadioType(radioType);
     resetDataWithChild();
     resetDataTypeCouple();
     setChildCant('');
+    setNoHousehold('');
     setUid('');
   }
 
   const sendData = async () => {
     const user = {
       name,
-      single,
       dob,
       child,
+      no_household: Number(noHousehold),
       child_cant: Number(childCant),
       postcode: postcode.trim().toUpperCase(),
       phone,
@@ -204,7 +183,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       return;
     }
 
-    if (uid === '' && [name, password, confirmPass, dob, postcode].includes('')) {
+    if (uid === '' && [name, password, confirmPass, dob, postcode, noHousehold].includes('')) {
       Alert.alert('Error', 'Required fields are empty');
       return;
     }
@@ -266,16 +245,14 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
               postcode={postcode}
               phone={phone}
               setPhone={setPhone}
-              single={single}
-              setSingle={setSingle}
               handleCreate={handleCreate}
               isAdmin={isAdmin}
               radioChild={radioChild}
               handleRadioChild={handleRadioChild}
-              radioDataType={radioDataType}
-              handleRadioType={handleRadioType}
               setChildCant={setChildCant}
               childCant={childCant}
+              setNoHousehold={setNoHousehold}
+              noHousehold={noHousehold}
               uid={uid}
             />
           </View>
