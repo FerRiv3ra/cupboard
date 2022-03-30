@@ -61,9 +61,9 @@ const NewReport = () => {
   }
 
   return (
-    <View style={[globalStyles.flex, globalStyles.green]}>
+    <View style={[globalStyles.flex, {backgroundColor: '#EEE'}]}>
       <View style={[globalStyles.view]}>
-        <Text style={[globalStyles.label, { color: '#FFF' }]}>Start date</Text>
+        <Text style={[globalStyles.label]}>Start date</Text>
         <View style={globalStyles.dateContainer}>
           <DatePicker
             androidVariant='nativeAndroid'
@@ -73,7 +73,7 @@ const NewReport = () => {
             onDateChange={(selectedDate) => handleStartDate(selectedDate)}
           />
         </View>
-        <Text style={[globalStyles.label, { color: '#FFF' }]}>Final date</Text>
+        <Text style={[globalStyles.label]}>End date</Text>
         <View style={globalStyles.dateContainer}>
           <DatePicker
             androidVariant='nativeAndroid'
@@ -89,7 +89,7 @@ const NewReport = () => {
           delay={1500}
         >
           <Pressable
-            style={[globalStyles.button, globalStyles.orange]}
+            style={[globalStyles.button, globalStyles.green]}
             onPress={() => handleNewReport()}
           >
             <FontAwesomeIcon

@@ -1,7 +1,7 @@
 import { faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React from 'react';
-import { SafeAreaView, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import React, {useEffect} from 'react';
+import { SafeAreaView, Text, StyleSheet, Pressable, ScrollView, Alert } from 'react-native';
 
 import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
@@ -10,8 +10,20 @@ import * as Animatable from 'react-native-animatable';
 
 const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, fromUsers }) => {
   const FromCus = fromUsers === undefined ? false : true;
-  const { child, child_cant, customer_id, name, single, uid, phone, email = '' } = (!FromCus ? userLogged['user'] : fromUsers.user);
+  const { child, child_cant, customer_id, name, no_household, uid, phone, email = '', visits } = (!FromCus ? userLogged['user'] : fromUsers.user);
   const logoFromFile = require('../assets/logovc.png');
+
+  useEffect(() => {
+    if(!FromCus){
+      if(visits % 4 === 3){
+        Alert.alert('Information', 'One more visit and then a review must be booked');
+      }
+  
+      if(visits !== 0 && visits % 4 === 0){
+        Alert.alert('Information', 'You must be book a review, please contact the staff');
+      }
+    }
+  }, []);
 
   const logout = () => {
     if (FromCus) {
@@ -53,8 +65,8 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
           <Text style={styles.title}>Children: {''}
             <Text style={styles.textInfo}>{child ? child_cant : 'No'}</Text>
           </Text>
-          <Text style={styles.title}>Kind of household: {''}
-            <Text style={styles.textInfo}>{single ? 'Single' : 'Couple'}</Text>
+          <Text style={styles.title}>Number household: {''}
+            <Text style={styles.textInfo}>{no_household}</Text>
           </Text>
           {phone && <Text style={styles.title}>Phone: {''}
             <Text style={styles.textInfo}>{phone ?? ''}</Text>
@@ -62,6 +74,10 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
           {!email.includes('@default') && <Text style={styles.title}>Email: {''}
             <Text style={styles.email}>{email}</Text>
           </Text>}
+          <Text style={[styles.title, globalStyles.textCenter]}>{FromCus ? 'This user have ' : 'You have '}
+            <Text style={styles.textInfo}>{visits === 0 ? 4 : 4 - (visits % 4)} </Text>
+            visits left
+          </Text>
         </Animatable.View>
         <Animatable.View
           animation={'bounceInUp'}
@@ -104,7 +120,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 15,
+    marginBottom: 10,
     color: '#000'
   },
   name: {

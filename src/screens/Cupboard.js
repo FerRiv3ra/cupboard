@@ -3,7 +3,7 @@ import React from 'react';
 import globalStyles from '../styles/styles';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faFileInvoice, faHandsHelping } from '@fortawesome/free-solid-svg-icons';
+import { faFileInvoice, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 
 const Cupboard = () => {
@@ -35,9 +35,9 @@ const Cupboard = () => {
           >
             <FontAwesomeIcon
               style={[globalStyles.icon, { color: '#FFF' }]}
-              icon={faHandsHelping}
+              icon={faQrcode}
             />
-            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New give away</Text>
+            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> Scan QR Code</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View

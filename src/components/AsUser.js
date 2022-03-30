@@ -28,11 +28,12 @@ const AsUser = () => {
 
   useEffect(() => {
     async function checkSession() {
-      const user = await AsyncStorage.getItem('user');
+      const user = JSON.parse(await AsyncStorage.getItem('user'));
       if (user) {
-        setUserLogged(JSON.parse(user));
-        setIsLoading(false);
-        setModalVisible(!modalVisible);
+        const [d, m, y] = user.dob.split('/');
+        const dob = new Date(`${y}-${m}-${d}`)
+        setCustomerId(user.customer_id.toString());
+        setDate(dob);
       }
     }
 
@@ -63,47 +64,36 @@ const AsUser = () => {
 
     const [y, m, d] = date.toISOString().slice(0, 10).split('-');
 
-    const user = await AsyncStorage.getItem('user');
-    const userL = await JSON.parse(user);
-
-    console.log(userL.user.customer_id)
-
     const userLogin = {
       customer_id: Number(customerId),
       dob: `${d}/${m}/${y}`
     }
 
-    if (userL && userL.user.customer_id === userLogin.customer_id && userL.user.dob === userLogin.dob) {
-      setUserLogged(userL);
-      setIsLoading(false);
-      setModalVisible(true);
-    } else {
-      try {
-        const response = await fetch('https://grubhubbackend.herokuapp.com/api/auth/login-user', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(userLogin)
-        });
-        const user = await response.json();
+    try {
+      const response = await fetch('https://grubhubbackend.herokuapp.com/api/auth/login-user', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userLogin)
+      });
+      const user = await response.json();
 
-        if (user['msg'] !== undefined) {
-          Alert.alert('Error', user['msg']);
-          setIsLoading(false);
-          return;
-        }
-
-        await AsyncStorage.setItem('user', JSON.stringify(user));
-
-        setUserLogged(user);
+      if (user['msg'] !== undefined) {
+        Alert.alert('Error', user['msg']);
         setIsLoading(false);
-        setModalVisible(!modalVisible);
-      } catch (error) {
-        console.log('Error', error);
-        Alert.alert('Error', 'Network request failed');
-        setIsLoading(false);
+        return;
       }
+
+      await AsyncStorage.setItem('user', JSON.stringify(user.user));
+
+      setUserLogged(user);
+      setIsLoading(false);
+      setModalVisible(!modalVisible);
+    } catch (error) {
+      console.log('Error', error);
+      Alert.alert('Error', 'Network request failed');
+      setIsLoading(false);
     }
   }
 

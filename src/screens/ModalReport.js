@@ -22,10 +22,10 @@ const ModalReport = ({ data = [], resetData, startDate, finalDate }) => {
           delay={500}
         >
           <Pressable
-            style={[globalStyles.button, globalStyles.orange]}
+            style={[globalStyles.button, globalStyles.green]}
             onPress={() => resetData()}
           >
-            <Text style={globalStyles.textBtn}>X Close</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>X Close</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View
