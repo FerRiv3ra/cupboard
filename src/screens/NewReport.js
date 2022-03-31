@@ -16,13 +16,14 @@ const NewReport = () => {
   const [finalDate, setFinalDate] = useState(initialDate);
 
   const [data, setData] = useState([]);
+  const [users, setUsers] = useState([]);
   const [modal, setModal] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       setStartDate(initialDate);
       setFinalDate(today);
-    }, 1500);
+    }, 1000);
   }, [])
 
   const handleStartDate = (selectedDate) => {
@@ -46,10 +47,23 @@ const NewReport = () => {
     const [yf, mf, df] = finalDate.toISOString().slice(0, 10).split('-');
     const final = `${df}/${mf}/${yf}`;
 
-    const request = await fetch(`https://grubhubbackend.herokuapp.com/api/deliveries?startDate=${start}&finalDate=${final}`)
-    const response = await request.json();
+    try {
+      const [reqData, reqUsers] = await Promise.all([
+        fetch(`https://grubhubbackend.herokuapp.com/api/deliveries?startDate=${start}&finalDate=${final}`),
+        fetch('https://grubhubbackend.herokuapp.com/api/users?limit=0')
+      ]);
+      const [deliveries, users] = await Promise.all([
+        reqData.json(),
+        reqUsers.json()
+      ]);
 
-    setData(response.deliveries);
+      const customersFilter = users.users.filter((cus) => cus.role === 'USER_ROLE');
+      setData(deliveries.deliveries);
+      setUsers(customersFilter);
+    } catch (error) {
+      Alert.alert('Error', 'Network request failed');
+    }
+
     setModal(true);
   }
 
@@ -57,11 +71,12 @@ const NewReport = () => {
     setStartDate(initialDate);
     setFinalDate(today);
     setData([]);
+    setUsers([]);
     setModal(false);
   }
 
   return (
-    <View style={[globalStyles.flex, {backgroundColor: '#EEE'}]}>
+    <View style={[globalStyles.flex, { backgroundColor: '#EEE' }]}>
       <View style={[globalStyles.view]}>
         <Text style={[globalStyles.label]}>Start date</Text>
         <View style={globalStyles.dateContainer}>
@@ -86,7 +101,7 @@ const NewReport = () => {
         <Animatable.View
           animation={'bounceIn'}
           duration={2000}
-          delay={1500}
+          delay={1000}
         >
           <Pressable
             style={[globalStyles.button, globalStyles.green]}
@@ -106,6 +121,7 @@ const NewReport = () => {
         <ModalReport
           resetData={resetData}
           data={data}
+          users={users}
           startDate={startDate}
           finalDate={finalDate}
         />

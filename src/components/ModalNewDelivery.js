@@ -79,12 +79,12 @@ const ModalNewDelivery = ({ uid, resetData }) => {
       return;
     }
 
-    if (user.single && totalItems > 15) {
+    if (user.no_household - user.child_cant === 1 && totalItems > 15) {
       Alert.alert('Error', 'You cannot exceed the total allowable number of items');
       return;
     }
 
-    if (!user.single && totalItems > 20) {
+    if (user.no_household - user.child_cant > 1 && totalItems > 20) {
       Alert.alert('Error', 'You cannot exceed the total allowable number of items');
       return;
     }
@@ -96,7 +96,7 @@ const ModalNewDelivery = ({ uid, resetData }) => {
 
     const token = await AsyncStorage.getItem('token');
     const data = {
-      amount: Number(totalItems) + toiletries === '' ? 0 : Number(toiletries),
+      amount: toiletries === '' ? Number(totalItems) : Number(toiletries) + Number(totalItems),
       customer_id: user.customer_id,
       cant_toiletries: toiletries === '' ? 0 : Number(toiletries),
       uid
@@ -147,12 +147,12 @@ const ModalNewDelivery = ({ uid, resetData }) => {
           <View style={[styles.info, globalStyles.shadow]}>
             <Text style={styles.title}><Text style={styles.label}>{user.name}</Text></Text>
             <Text style={[styles.txt]}>
-              {user.single ? 'Single' : 'Couple'} {' '}
-              {user.child_cant === 0 ? 'without children' : user.child_cant === 1 ? 'with 1 child' :
-                `with ${user.child_cant} children`
+              {user.no_household - user.child_cant === 1 ? 'Single ' : `${user.no_household} in household `}
+              {user.child_cant === 0 ? '(0 children)' : user.child_cant === 1 ? '(1 child)' :
+                `(${user.child_cant} children)`
               }
             </Text>
-            <Text style={styles.txt}>{user.single ? 15 : 20} {` items, ${user.toiletries} toiletries.`}</Text>
+            <Text style={styles.txt}>{user.no_household - user.child_cant === 1 ? 15 : 20} {`items, ${user.toiletries} toiletries.`}</Text>
             <Text style={styles.txt}><Text style={styles.label}>Last visit:</Text> {user.last === '' ? 'First visit' : user.last}</Text>
             <Text style={styles.txt}><Text style={styles.label}>Total visits:</Text> {user.visits}</Text>
           </View>
@@ -166,7 +166,7 @@ const ModalNewDelivery = ({ uid, resetData }) => {
             textAlign={'center'}
             maxLength={2}
           />
-          <TextInput
+          {user.toiletries !== 0 && <TextInput
             style={[globalStyles.input, { marginTop: 10 }]}
             placeholder='Toiletries'
             keyboardType='number-pad'
@@ -175,7 +175,7 @@ const ModalNewDelivery = ({ uid, resetData }) => {
             value={toiletries}
             textAlign={'center'}
             maxLength={1}
-          />
+          />}
           <Pressable
             style={[styles.button, globalStyles.green]}
             onPress={() => handleSubmit()}

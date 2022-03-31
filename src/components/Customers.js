@@ -110,6 +110,39 @@ const Customers = () => {
     setDataFilter(customers.filter((cus) => cus.name.includes(txt) || cus.customer_id.toString() === txt));
   }
 
+  const handleUnlock = (uid) => {
+    const unlockU = async () => {
+      const [userE] = customers.filter((cus) => cus.uid === uid);
+      let toiletries = 3;
+      if(userE.no_household - userE.child_cant > 1){
+        toiletries = 6;
+      }
+      const url = `https://grubhubbackend.herokuapp.com/api/users/${uid}`;
+      try {
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({toiletries: toiletries, blocked: false, role: 'USER_ROLE'})
+        });
+        const userUnlock = await response.json();
+        console.log(userUnlock)
+        if(userUnlock){
+          setRefresh(true);
+        }
+      } catch (error) {
+        console.log(error)
+        Alert.alert('Error', 'Network request failed');
+      }
+    }
+
+    Alert.alert('Unblock?', 'Are you sure you want to unblock this user?', [
+      { text: 'Cancel' },
+      { text: 'Yes, unblock', onPress: () => unlockU() },
+    ])
+  }
+
   const userDelete = (uid) => {
     const deleteU = async () => {
       try {
@@ -211,6 +244,7 @@ const Customers = () => {
               setModalVisibleUser={setModalVisibleUser}
               selectUser={selectUser}
               goToCommunityCupboard={goToCommunityCupboard}
+              handleUnlock={handleUnlock}
             />
           )
         }}

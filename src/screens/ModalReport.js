@@ -5,11 +5,27 @@ import DetailReport from '../components/DetailReport';
 
 import * as Animatable from 'react-native-animatable';
 
-const ModalReport = ({ data = [], resetData, startDate, finalDate }) => {
+const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate }) => {
   const totalItems = data.reduce((tot, item) => {
     return tot + item.amount;
   }, 0);
-  const people = data.length;
+  const visits = data.length;
+
+  const usersData = new Set(data.map((del) => {
+    for (const user of users) {
+      if(user.customer_id === del.customer_id){
+        return user
+      }
+    }
+  }));
+
+  const usersArr = [...usersData];
+  
+  const people = usersArr.length;
+
+  const totalHousehold = usersArr.reduce((tot, item) => {
+    return tot + item.no_household;
+  }, 0);
 
   return (
     <SafeAreaView
@@ -37,11 +53,17 @@ const ModalReport = ({ data = [], resetData, startDate, finalDate }) => {
           <Text style={styles.label}>Start date:
             <Text style={styles.info}> {`${startDate.toDateString()}`}</Text>
           </Text>
-          <Text style={styles.label}>Final date:
+          <Text style={styles.label}>End date:
             <Text style={styles.info}> {`${finalDate.toDateString()}`}</Text>
           </Text>
           <Text style={styles.label}>Total people:
             <Text style={styles.info}> {`${people}`}</Text>
+          </Text>
+          <Text style={styles.label}>Total in all household:
+            <Text style={styles.info}> {`${totalHousehold}`}</Text>
+          </Text>
+          <Text style={styles.label}>Total visits:
+            <Text style={styles.info}> {`${visits}`}</Text>
           </Text>
           <Text style={styles.label}>Total items:
             <Text style={styles.info}> {`${totalItems}`}</Text>
@@ -52,15 +74,15 @@ const ModalReport = ({ data = [], resetData, startDate, finalDate }) => {
           animation={'bounceInDown'}
           duration={2000}
           delay={1500}
-        >{people === 0 ? 'Nothing to show' : 'Details'}</Animatable.Text>
+        >{visits === 0 ? 'Nothing to show' : 'Details'}</Animatable.Text>
         <Animatable.View
           animation={'bounceInDown'}
           duration={2000}
           delay={2000}
         >
           <FlatList
-            data={data}
-            keyExtractor={(item) => item._id}
+            data={usersArr}
+            keyExtractor={(item) => item.uid}
             renderItem={({ item }) => {
               return (
                 <DetailReport

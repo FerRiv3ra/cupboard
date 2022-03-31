@@ -1,7 +1,7 @@
 import { faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, {useEffect} from 'react';
-import { SafeAreaView, Text, StyleSheet, Pressable, ScrollView, Alert } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, Pressable, ScrollView, Alert, View } from 'react-native';
 
 import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
@@ -10,7 +10,19 @@ import * as Animatable from 'react-native-animatable';
 
 const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, fromUsers }) => {
   const FromCus = fromUsers === undefined ? false : true;
-  const { child, child_cant, customer_id, name, no_household, uid, phone, email = '', visits } = (!FromCus ? userLogged['user'] : fromUsers.user);
+  const { 
+    child, 
+    child_cant,
+    housing_provider,
+    customer_id, 
+    name, 
+    no_household, 
+    uid, 
+    phone, 
+    email = '', 
+    visits,
+    blocked 
+  } = (!FromCus ? userLogged['user'] : fromUsers.user);
   const logoFromFile = require('../assets/logovc.png');
 
   useEffect(() => {
@@ -19,7 +31,7 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
         Alert.alert('Information', 'One more visit and then a review must be booked');
       }
   
-      if(visits !== 0 && visits % 4 === 0){
+      if(blocked && visits !== 0 && visits % 4 === 0){
         Alert.alert('Information', 'You must be book a review, please contact the staff');
       }
     }
@@ -58,15 +70,15 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
           duration={2000}
           delay={300}
         >
+          <View style={styles.idContainer}>
+            <Text style={styles.textId}>{blocked ? 'Blocked' : `#${customer_id}`}</Text>
+          </View>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.title}>Customer ID: {''}
-            <Text style={styles.textInfo}>{customer_id}</Text>
-          </Text>
-          <Text style={styles.title}>Children: {''}
-            <Text style={styles.textInfo}>{child ? child_cant : 'No'}</Text>
-          </Text>
           <Text style={styles.title}>Number household: {''}
             <Text style={styles.textInfo}>{no_household}</Text>
+          </Text>
+          <Text style={styles.title}>Housing provider: {''}
+            <Text style={styles.textInfo}>{housing_provider}</Text>
           </Text>
           {phone && <Text style={styles.title}>Phone: {''}
             <Text style={styles.textInfo}>{phone ?? ''}</Text>
@@ -75,7 +87,7 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
             <Text style={styles.email}>{email}</Text>
           </Text>}
           <Text style={[styles.title, globalStyles.textCenter]}>{FromCus ? 'This user have ' : 'You have '}
-            <Text style={styles.textInfo}>{visits === 0 ? 4 : 4 - (visits % 4)} </Text>
+            <Text style={styles.textInfo}>{blocked ? 0 : visits === 0 ? 4 : 4 - (visits % 4)} </Text>
             visits left
           </Text>
         </Animatable.View>
@@ -86,7 +98,7 @@ const ModalUser = ({ userLogged, setModalVisible, modalVisible, resetState, from
         >
           <Pressable
             style={[globalStyles.button, globalStyles.green, { marginHorizontal: 30 }]}
-            onLongPress={logout}
+            onPress={logout}
           >
             <FontAwesomeIcon
               style={globalStyles.icon}
@@ -113,12 +125,12 @@ const styles = StyleSheet.create({
   },
   info: {
     marginHorizontal: 30,
-    padding: 15,
-    borderRadius: 20,
+    padding: 12,
+    borderRadius: 10,
     backgroundColor: '#FFF'
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 10,
     color: '#000'
@@ -130,11 +142,24 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     textDecorationLine: 'underline',
+    alignSelf: 'center',
   },
   textInfo: {
     textTransform: 'capitalize',
-    fontWeight: '800',
-    color: '#336210'
+    color: '#336210',
+  },
+  textId: {
+    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 15
+  },
+  idContainer:{
+    backgroundColor: '#336210',
+    padding: 5,
+    position: 'absolute',
+    right: -10,
+    top: -10,
+    borderRadius: 100
   },
   email: {
     color: '#336210'

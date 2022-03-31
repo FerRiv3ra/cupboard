@@ -5,12 +5,9 @@ const DetailReport = ({item}) => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.info}>Date: <Text style={styles.label}>{item.date.toLocaleString().slice(0, 10)}</Text></Text>
-        <Text style={styles.info}>Hour: <Text style={styles.label}>{item.date.toLocaleString().slice(11, 16)}</Text></Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.info}>Customer ID: <Text style={styles.label}>{item.customer_id}</Text></Text>
-        <Text style={styles.info}>Items: <Text style={styles.label}>{item.amount}</Text></Text>
+        <Text style={styles.info}>ID: <Text style={styles.label}>{item.customer_id}</Text></Text>
+        <Text style={{flex: 1, textAlign: 'center'}}>-</Text>
+        <Text style={styles.info}>Visits: <Text style={styles.label}>{item.visits}</Text></Text>
       </View>
     </View>
   )
@@ -25,7 +22,9 @@ const styles = StyleSheet.create({
     },
     info: {
         color: '#444',
-        fontWeight: '600'
+        fontWeight: '600',
+        flex: 2,
+        textAlign: 'center',
     },
     label: {
         fontWeight: '800',

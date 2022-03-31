@@ -4,6 +4,8 @@ import React, { useRef } from 'react';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import RightActions from './RightActions';
 import LeftAction from './LeftAction';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const User = ({
   item,
@@ -12,9 +14,10 @@ const User = ({
   userDelete,
   setModalVisibleUser,
   selectUser,
-  goToCommunityCupboard
+  goToCommunityCupboard,
+  handleUnlock
 }) => {
-  const { name, email, dob, customer_id, role, uid } = item;
+  const { name, email, dob, customer_id, role, uid, blocked } = item;
 
   const swipeableRef = useRef(null);
 
@@ -36,7 +39,7 @@ const User = ({
         />)
       }}
       renderLeftActions={() => {
-        return (<LeftAction
+        return (role === 'USER_ROLE' && <LeftAction
           uid={uid}
           goToCommunityCupboard={goToCommunityCupboard}
           closeSwipeable={closeSwipeable}
@@ -51,6 +54,7 @@ const User = ({
               setModalVisibleUser(true);
             }
           }}
+          style={styles.row}
         >
           <View style={styles.container}>
             {role === 'ADMIN_ROLE' ?
@@ -66,6 +70,17 @@ const User = ({
               </View>
             }
           </View>
+          {blocked &&
+            <Pressable 
+              style={styles.blocked}
+              onLongPress={() => handleUnlock(uid)}
+            >
+              <FontAwesomeIcon
+                style={{ color: '#336210' }}
+                size={20}
+                icon={faLock}
+              />
+            </Pressable>}
         </Pressable>
       </View>
     </Swipeable>
@@ -77,8 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     paddingHorizontal: 25,
     paddingVertical: 5,
-    borderBottomColor: '#4b6423',
-    borderBottomWidth: 1
+    flexDirection: 'column',
+    flex: 4
   },
   textName: {
     fontSize: 22,
@@ -91,6 +106,17 @@ const styles = StyleSheet.create({
     color: '#444',
     fontWeight: '500',
   },
+  row: {
+    flexDirection: 'row',
+    borderBottomColor: '#4b6423',
+    borderBottomWidth: 1,
+  },
+  blocked: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default User

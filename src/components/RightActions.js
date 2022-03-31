@@ -48,13 +48,15 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20
+    marginTop: 20,
   },
   btn: {
     padding: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottomColor: '#4b6423',
+    borderBottomWidth: 1,
   },
   btnDelete: {
     backgroundColor: '#EF4444'
