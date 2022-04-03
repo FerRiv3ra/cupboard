@@ -22,7 +22,7 @@ const WelcomeScreen = () => {
           style={styles.containerImg}
         >
           <Image
-            style={{ height: 250, width: 250 }}
+            style={{ height: 220, width: 220 }}
             source={require('../assets/logovc.png')}
           />
         </Animatable.View>
@@ -47,7 +47,7 @@ const WelcomeScreen = () => {
           animation={'rubberBand'}
           duration={3000}
           iterationCount={2}
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 20 }}
         >
           <Text style={styles.title}>Community Cupboard</Text>
           <Text style={styles.subtitle}>Opening hours</Text>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
   containerImg: {
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: 40,
   },
   title: {
     color: '#336210',

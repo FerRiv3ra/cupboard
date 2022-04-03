@@ -1,11 +1,19 @@
-import { View, Text, Pressable, SafeAreaView, FlatList, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, Pressable, SafeAreaView, FlatList, StyleSheet, Alert, Modal, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
+
+import { faEnvelopeOpenText, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+
 import globalStyles from '../styles/styles';
 import DetailReport from '../components/DetailReport';
 
 import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSentEmail, setIsSentEmail] = useState(false);
+
   const totalItems = data.reduce((tot, item) => {
     return tot + item.amount;
   }, 0);
@@ -13,19 +21,61 @@ const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate })
 
   const usersData = new Set(data.map((del) => {
     for (const user of users) {
-      if(user.customer_id === del.customer_id){
+      if (user.customer_id === del.customer_id) {
         return user
       }
     }
   }));
 
   const usersArr = [...usersData];
-  
+
   const people = usersArr.length;
 
   const totalHousehold = usersArr.reduce((tot, item) => {
     return tot + item.no_household;
   }, 0);
+
+  const handleEmail = async () => {
+    if(isSentEmail){
+      Alert.alert('Error', 'Email alredy sent');
+      return;
+    }
+
+    setIsLoading(true)
+    const [ys, ms, ds] = startDate.toISOString().slice(0, 10).split('-');
+    const [yf, mf, df] = finalDate.toISOString().slice(0, 10).split('-');
+
+    const dates = {
+      startDate: `${ds}/${ms}/${ys}`,
+      finalDate: `${df}/${mf}/${yf}`
+    }
+
+    const token = await AsyncStorage.getItem('token');
+
+    try {
+      const response = await fetch('https://grubhubbackend.herokuapp.com/api/deliveries/email', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "x-token": token
+        },
+        body: JSON.stringify(dates)
+      });
+      const isSent = await response.json();
+
+      if (isSent.error !== undefined) {
+        Alert.alert('Error', isSent.error);
+        setIsLoading(false);
+      } else {
+        Alert.alert('Information', isSent.msg);
+        setIsLoading(false);
+        setIsSentEmail(true);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Network request failed');
+      setIsLoading(false);
+    }
+  }
 
   return (
     <SafeAreaView
@@ -41,7 +91,7 @@ const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate })
             style={[globalStyles.button, globalStyles.green]}
             onPress={() => resetData()}
           >
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>X Close</Text>
+            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}>X Close</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View
@@ -50,6 +100,20 @@ const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate })
           duration={2000}
           delay={1000}
         >
+          <Pressable
+            style={[styles.mailContainer, isSentEmail ? globalStyles.gray : globalStyles.orange]}
+            onPress={() => handleEmail()}
+          >
+            {isLoading ?
+              <ActivityIndicator
+                animating={isLoading}
+              /> :
+              <FontAwesomeIcon
+                style={[globalStyles.icon]}
+                icon={isSentEmail ? faEnvelope : faEnvelopeOpenText}
+              />
+            }
+          </Pressable>
           <Text style={styles.label}>Start date:
             <Text style={styles.info}> {`${startDate.toDateString()}`}</Text>
           </Text>
@@ -113,6 +177,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     backgroundColor: '#FFF'
+  },
+  mailContainer: {
+    padding: 10,
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    borderRadius: 100
   },
 })
 
