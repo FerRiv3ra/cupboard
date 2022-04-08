@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Alert } from 'react-native'
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RightActions = ({ setModalVisible, userEdit, userDelete, uid, role, closeSwipeable }) => {
   return (
@@ -11,8 +12,13 @@ const RightActions = ({ setModalVisible, userEdit, userDelete, uid, role, closeS
     >
       <Pressable
         style={[styles.btn, globalStyles.orange]}
-        onPress={() => {
+        onPress={async () => {
+          const userLogged = await AsyncStorage.getItem('uid');
           closeSwipeable()
+          if(uid !== userLogged && role === 'ADMIN_ROLE'){
+            Alert.alert('Error', 'You can edit only your user');
+            return
+          }
           setModalVisible(true)
           userEdit(uid, role)
         }}
@@ -26,7 +32,13 @@ const RightActions = ({ setModalVisible, userEdit, userDelete, uid, role, closeS
       </Pressable>
       <Pressable
         style={[styles.btn, styles.btnDelete]}
-        onPress={() => {
+        onPress={async () => {
+          closeSwipeable()
+          const userLogged = await AsyncStorage.getItem('uid');
+          if(uid === userLogged && role === 'ADMIN_ROLE'){
+            Alert.alert('Error', 'You cannot delete your user');
+            return
+          }
           closeSwipeable()
           userDelete(uid)
         }}

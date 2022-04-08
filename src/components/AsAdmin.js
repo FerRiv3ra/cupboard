@@ -45,6 +45,7 @@ const AsAdmin = () => {
         setIsLoading(false);
         return;
       }
+      await AsyncStorage.setItem('uid', user.user.uid);
 
       await AsyncStorage.setItem('token', user['token']);
 

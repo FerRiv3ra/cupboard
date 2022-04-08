@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, TextInput, Pressable } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import globalStyles from '../styles/styles'
 import DatePicker from 'react-native-date-picker'
 import { RadioGroup } from 'react-native-radio-buttons-group'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faSave } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleDot, faEye, faEyeSlash, faSave } from '@fortawesome/free-solid-svg-icons'
 
 const FormUser = (props) => {
+  const [passVisible, setPassVisible] = useState(false);
+  const [confirmPassVisible, setConfirmPassVisible] = useState(false);
+
   const { name,
     setName,
     email,
@@ -31,7 +34,11 @@ const FormUser = (props) => {
     setNoHousehold,
     noHousehold,
     setChildCant,
-    childCant
+    childCant,
+    agree,
+    setAgree,
+    houseProvider,
+    setHouseProvider
   } = props;
 
   return (
@@ -59,27 +66,47 @@ const FormUser = (props) => {
       />
       {isAdmin ? <View>
         <Text style={globalStyles.label}>Password</Text>
-        <TextInput
-          style={globalStyles.input}
-          secureTextEntry={true}
-          textContentType='password'
-          placeholder='Password'
-          placeholderTextColor={'#666'}
-          onChangeText={setPassword}
-          value={password}
-          autoCapitalize={'none'}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            style={[globalStyles.input, { flex: 1, marginRight: 10 }]}
+            secureTextEntry={!passVisible}
+            textContentType='password'
+            placeholder='Password'
+            placeholderTextColor={'#666'}
+            onChangeText={setPassword}
+            value={password}
+            autoCapitalize={'none'}
+          />
+          <Pressable
+            style={{ flexDirection: 'column', justifyContent: 'center' }}
+            onPress={() => setPassVisible(!passVisible)}>
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#444' }]}
+              icon={passVisible ? faEyeSlash : faEye}
+            />
+          </Pressable>
+        </View>
         <Text style={globalStyles.label}>Confirm Password</Text>
-        <TextInput
-          style={globalStyles.input}
-          secureTextEntry={true}
-          textContentType='password'
-          placeholder='Confirm Password'
-          placeholderTextColor={'#666'}
-          onChangeText={setConfirmPass}
-          value={confirmPass}
-          autoCapitalize={'none'}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            style={[globalStyles.input, { flex: 1, marginRight: 10 }]}
+            secureTextEntry={!confirmPassVisible}
+            textContentType='password'
+            placeholder='Confirm Password'
+            placeholderTextColor={'#666'}
+            onChangeText={setConfirmPass}
+            value={confirmPass}
+            autoCapitalize={'none'}
+          />
+          <Pressable
+            style={{ flexDirection: 'column', justifyContent: 'center' }}
+            onPress={() => setConfirmPassVisible(!confirmPassVisible)}>
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#444' }]}
+              icon={confirmPassVisible ? faEyeSlash : faEye}
+            />
+          </Pressable>
+        </View>
       </View> :
         <View>
           <Text style={[globalStyles.label]}>Number in household</Text>
@@ -137,7 +164,19 @@ const FormUser = (props) => {
         onChangeText={setPostcode}
         value={postcode}
       />
-      <Text style={globalStyles.label}>Phone (optional)</Text>
+      {!isAdmin &&
+        <View>
+          <Text style={globalStyles.label}>Housing provider (required)</Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder='Housing provider'
+            keyboardType='default'
+            placeholderTextColor={'#666'}
+            onChangeText={setHouseProvider}
+            value={houseProvider}
+          />
+        </View>}
+      <Text style={globalStyles.label}>Phone (required)</Text>
       <TextInput
         style={globalStyles.input}
         placeholder='Phone'
@@ -147,8 +186,19 @@ const FormUser = (props) => {
         onChangeText={setPhone}
         value={phone}
       />
+      {!isAdmin && uid === '' && <Pressable
+        onPress={() => setAgree(!agree)}
+        style={{ flexDirection: 'row', marginTop: 10 }}>
+        <View style={{ flexDirection: 'column', marginTop: 15 }}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, { color: agree ? '#3A6621' : '#444', marginRight: 5 }]}
+            icon={agree ? faCircleCheck : faCircleDot}
+          />
+        </View>
+        <Text style={[globalStyles.label, { fontSize: 12 }]}>I agree to The Vine Centre storing my personal data</Text>
+      </Pressable>}
       <Pressable
-        style={[globalStyles.button, globalStyles.green]}
+        style={[globalStyles.button, globalStyles.green, { marginTop: 20 }]}
         onPress={handleCreate}
       >
         {

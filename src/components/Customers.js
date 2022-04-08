@@ -70,7 +70,7 @@ const Customers = () => {
     setIsAdmin(!isAdmin);
   }
 
-  const userEdit = (uid, role) => {
+  const userEdit = async (uid, role) => {
     let userToEdit = {};
     if (role === 'ADMIN_ROLE') {
       userToEdit = admins.filter((adm) => adm.uid === uid);

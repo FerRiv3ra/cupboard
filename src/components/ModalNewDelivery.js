@@ -114,7 +114,7 @@ const ModalNewDelivery = ({ uid, resetData }) => {
       const delivery = await response.json();
 
       if (delivery['_id']) {
-        Alert.alert('Success', 'New give away saved', [
+        Alert.alert('Success', 'Visit saved', [
           {
             text: 'OK', onPress: () => {
               resetData();

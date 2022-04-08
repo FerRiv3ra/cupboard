@@ -27,6 +27,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
   const [password, setPassword] = useState('abc123');
   const [confirmPass, setConfirmPass] = useState('abc123');
   const [noHousehold, setNoHousehold] = useState('');
+  const [houseProvider, setHouseProvider] = useState('');
   const [dob, setDob] = useState('');
   const [child, setChild] = useState(false);
   const [childCant, setChildCant] = useState('');
@@ -34,6 +35,8 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('USER_ROLE');
+
+  const [agree, setAgree] = useState(false);
 
   useEffect(() => {
     if (userE['uid'] !== undefined) {
@@ -44,11 +47,14 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       setPhone(userE.phone)
       setEmail(userE.email)
       setRole(userE.role)
+      setHouseProvider(userE.housing_provider)
       setChildCant(userE.child_cant.toString())
       setNoHousehold(userE.no_household.toString())
 
       if (userE.role === 'ADMIN_ROLE') {
         setIsAdmin(true);
+        setPassword('');
+        setConfirmPass('');
       }
 
       const [d, m, y] = userE.dob.split('/');
@@ -73,11 +79,13 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       setPassword('')
       setConfirmPass('')
       setIsAdmin(true)
+      setNoHousehold('1');
     } else {
       setRole('USER_ROLE')
       setPassword('abc123')
       setConfirmPass('abc123')
       setIsAdmin(false)
+      setNoHousehold('');
     }
   }
 
@@ -113,6 +121,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
     setEmail('');
     setRole('');
     resetDataChild();
+    setHouseProvider('')
     handleRadioChild(radioButtonsDataChild);
     resetDataNU();
     handleRadio(radioButtonsDataNU);
@@ -128,9 +137,10 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       name,
       dob,
       child,
+      housing_provider: houseProvider,
       no_household: Number(noHousehold),
       child_cant: Number(childCant),
-      postcode: postcode.trim().toUpperCase(),
+      postcode: postcode.replace(' ', '').trim().toUpperCase(),
       phone,
       email: email.trim(),
       role
@@ -183,7 +193,12 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
       return;
     }
 
-    if (uid === '' && [name, password, confirmPass, dob, postcode, noHousehold].includes('')) {
+    if (!isAdmin && houseProvider === '') {
+      Alert.alert('Error', 'Required fields are empty');
+      return;
+    }
+
+    if (uid === '' && [name, password, confirmPass, dob, postcode, noHousehold, phone].includes('')) {
       Alert.alert('Error', 'Required fields are empty');
       return;
     }
@@ -196,6 +211,13 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
     if (child && childCant === '') {
       Alert.alert('Error', 'Number of children is required');
       return;
+    }
+
+    if(uid === '' && !isAdmin){
+      if(!agree){
+        Alert.alert('Error', 'It is necessary to accept the terms');
+        return;
+      }
     }
 
     sendData();
@@ -254,6 +276,10 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
               setNoHousehold={setNoHousehold}
               noHousehold={noHousehold}
               uid={uid}
+              agree={agree}
+              setAgree={setAgree}
+              houseProvider={houseProvider}
+              setHouseProvider={setHouseProvider}
             />
           </View>
         </ScrollView>

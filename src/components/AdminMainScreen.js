@@ -76,7 +76,7 @@ const AdminMainScreen = () => {
         >
           <Pressable
             style={[globalStyles.button, globalStyles.green, styles.btn]}
-            onLongPress={handleLogout}
+            onPress={handleLogout}
           >
             <FontAwesomeIcon
               style={globalStyles.icon}

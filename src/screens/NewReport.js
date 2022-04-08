@@ -48,18 +48,11 @@ const NewReport = () => {
     const final = `${df}/${mf}/${yf}`;
 
     try {
-      const [reqData, reqUsers] = await Promise.all([
-        fetch(`https://grubhubbackend.herokuapp.com/api/deliveries?startDate=${start}&finalDate=${final}`),
-        fetch('https://grubhubbackend.herokuapp.com/api/users?limit=0')
-      ]);
-      const [deliveries, users] = await Promise.all([
-        reqData.json(),
-        reqUsers.json()
-      ]);
+      const reqData = await fetch(`https://grubhubbackend.herokuapp.com/api/deliveries?startDate=${start}&finalDate=${final}`);
+      const deliveries = await reqData.json()
 
-      const customersFilter = users.users.filter((cus) => cus.role === 'USER_ROLE');
       setData(deliveries.deliveries);
-      setUsers(customersFilter);
+      setUsers(deliveries.usersArr);
     } catch (error) {
       Alert.alert('Error', 'Network request failed');
     }

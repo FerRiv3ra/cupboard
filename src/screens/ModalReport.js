@@ -19,19 +19,9 @@ const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate })
   }, 0);
   const visits = data.length;
 
-  const usersData = new Set(data.map((del) => {
-    for (const user of users) {
-      if (user.customer_id === del.customer_id) {
-        return user
-      }
-    }
-  }));
+  const people = users.length;
 
-  const usersArr = [...usersData];
-
-  const people = usersArr.length;
-
-  const totalHousehold = usersArr.reduce((tot, item) => {
+  const totalHousehold = users.reduce((tot, item) => {
     return tot + item.no_household;
   }, 0);
 
@@ -145,7 +135,7 @@ const ModalReport = ({ data = [], users = [], resetData, startDate, finalDate })
           delay={2000}
         >
           <FlatList
-            data={usersArr}
+            data={users}
             keyExtractor={(item) => item.uid}
             renderItem={({ item }) => {
               return (
