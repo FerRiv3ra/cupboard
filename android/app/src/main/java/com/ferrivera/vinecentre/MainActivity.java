@@ -1,4 +1,5 @@
-package com.cupboard;
+// package com.cupboard;
+package com.ferrivera.vinecentre;
 
 import android.os.Bundle; // here
 

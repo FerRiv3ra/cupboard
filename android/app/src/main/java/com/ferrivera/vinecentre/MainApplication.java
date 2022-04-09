@@ -1,4 +1,5 @@
-package com.cupboard;
+// package com.cupboard;
+package com.ferrivera.vinecentre;
 
 // react-native-splash-screen >= 0.3.1
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
