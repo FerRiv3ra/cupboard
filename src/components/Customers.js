@@ -40,6 +40,7 @@ const Customers = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    resetRadio();
     async function fetchMyAPI() {
       try {
         let response = await fetch('https://grubhubbackend.herokuapp.com/api/users?limit=0')
@@ -62,6 +63,11 @@ const Customers = () => {
 
   const handleNewUser = () => {
     setModalVisible(!modalVisible);
+  }
+
+  const resetRadio = () => {
+    radioButtonsData[0].selected = true;
+    radioButtonsData[1].selected = false;
   }
 
   const handleChange = (arrRbt) => {

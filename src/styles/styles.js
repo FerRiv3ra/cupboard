@@ -3,7 +3,8 @@ import { StyleSheet } from 'react-native';
 const globalStyles = StyleSheet.create({
   dateContainer: {
     backgroundColor: '#FFF',
-    borderRadius: 10
+    borderRadius: 10,
+    alignItems: 'center',
   },
   label: {
     marginBottom: 10,

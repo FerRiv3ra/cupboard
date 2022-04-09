@@ -104,7 +104,6 @@
 				7D4133EC15CA0CFD14DEED09 /* Pods-cupboard-cupboardTests.debug.xcconfig */,
 				0A680A46A89E7B5D393007C6 /* Pods-cupboard-cupboardTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
