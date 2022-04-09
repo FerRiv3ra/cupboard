@@ -192,6 +192,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-splash-screen')
     //React navigation
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'

@@ -1,13 +1,19 @@
 import { View, Text, Pressable, SafeAreaView, Image, StyleSheet } from 'react-native';
-import React from 'react';
-import globalStyles from '../styles/styles';
+import React, {useEffect} from 'react';
+
+import SplashScreen from 'react-native-splash-screen'
+
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-
 import * as Animatable from 'react-native-animatable';
 
+import globalStyles from '../styles/styles';
+
 const WelcomeScreen = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
   const navigation = useNavigation();
 
   return (
