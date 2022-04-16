@@ -204,7 +204,7 @@ const ModalNewUser = ({ modalVisible, setModalVisible, user: userE }) => {
     }
 
     if (password !== confirmPass) {
-      Alert.alert('Error', 'The passwords are diferent');
+      Alert.alert('Error', `The passwords don't match`);
       return;
     }
 

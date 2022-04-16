@@ -8,20 +8,24 @@
     android:textAlignment="center">
 
     <FrameLayout
-        android:layout_width="341dp"
-        android:layout_height="326dp"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
         android:layout_gravity="center"
-        android:background="@mipmap/ic_launcher_adaptive_fore">
+        android:background="@drawable/appstore">
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/textView2"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:scrollHorizontally="false"
-        android:text="@string/the_vine_centre_app_by_ferrivera"
-        android:textSize="16sp" />
+        android:layout_height="50sp">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/the_vine_centre_app_by_ferrivera"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </FrameLayout>
 
 </LinearLayout>

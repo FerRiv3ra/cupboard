@@ -5,13 +5,14 @@ import globalStyles from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 
 const AsAdmin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [passVisible, setPassVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -74,15 +75,25 @@ const AsAdmin = () => {
             value={email}
           />
           <Text style={globalStyles.label}>Password</Text>
+          <View style={{ flexDirection: 'row' }}>
           <TextInput
-            style={[globalStyles.input, globalStyles.shadow]}
-            secureTextEntry={true}
+            style={[globalStyles.input, globalStyles.shadow, { flex: 1, marginRight: 10 }]}
+            secureTextEntry={!passVisible}
             textContentType='password'
             placeholder='Password'
             placeholderTextColor={'#666'}
             onChangeText={setPassword}
             value={password}
           />
+          <Pressable
+            style={{ flexDirection: 'column', justifyContent: 'center' }}
+            onPress={() => setPassVisible(!passVisible)}>
+            <FontAwesomeIcon
+              style={[globalStyles.icon, { color: '#444' }]}
+              icon={passVisible ? faEyeSlash : faEye}
+            />
+          </Pressable>
+          </View>
         </View>
       </View>
       <Pressable

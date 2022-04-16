@@ -64,7 +64,7 @@ const User = ({
               </View>
               :
               <View>
-                <Text style={styles.text}>Customer ID: {customer_id}</Text>
+                <Text style={styles.text}>User ID: {customer_id}</Text>
                 <Text style={styles.textName}>{name}</Text>
                 <Text style={styles.text}>{dob}</Text>
               </View>
