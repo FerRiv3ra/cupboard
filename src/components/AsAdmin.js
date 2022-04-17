@@ -39,10 +39,10 @@ const AsAdmin = () => {
       });
       const user = await response.json();
 
-      const { errors } = user;
+      const { msg } = user;
 
-      if (errors !== undefined) {
-        Alert.alert('Error', errors[0]['msg']);
+      if (msg !== undefined) {
+        Alert.alert('Error', msg);
         setIsLoading(false);
         return;
       }
@@ -55,7 +55,6 @@ const AsAdmin = () => {
       setIsLoading(false);
       navigation.navigate('AdminMainScreen');
     } catch (error) {
-      console.log('Error', error);
       Alert.alert('Error', 'Network request failed');
       setIsLoading(false);
     }
