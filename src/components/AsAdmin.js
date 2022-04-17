@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, Pressable, Alert } from 'react-native';
+import { Text, View, TextInput, Pressable, Alert, StyleSheet } from 'react-native';
 import globalStyles from '../styles/styles';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -76,7 +76,7 @@ const AsAdmin = () => {
           <Text style={globalStyles.label}>Password</Text>
           <View style={{ flexDirection: 'row' }}>
           <TextInput
-            style={[globalStyles.input, globalStyles.shadow, { flex: 1, marginRight: 10 }]}
+            style={[globalStyles.input, globalStyles.shadow, styles.pass]}
             secureTextEntry={!passVisible}
             textContentType='password'
             placeholder='Password'
@@ -85,7 +85,7 @@ const AsAdmin = () => {
             value={password}
           />
           <Pressable
-            style={{ flexDirection: 'column', justifyContent: 'center' }}
+            style={styles.btnViewPass}
             onPress={() => setPassVisible(!passVisible)}>
             <FontAwesomeIcon
               style={[globalStyles.icon, { color: '#444' }]}
@@ -109,5 +109,21 @@ const AsAdmin = () => {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  btnViewPass: { 
+    flexDirection: 'column', 
+    justifyContent: 'center',
+    backgroundColor: '#FFF',
+    padding: 15,
+    borderBottomEndRadius: 10,
+    borderTopRightRadius: 10,
+    position: 'absolute',
+    right: 0
+  },
+  pass: {
+    flex: 1,
+  },
+})
 
 export default AsAdmin;

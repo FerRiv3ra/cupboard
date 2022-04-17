@@ -192,16 +192,6 @@ const Customers = () => {
       <Pressable
         onPress={() => Keyboard.dismiss()}
       >
-        <Pressable
-          style={[globalStyles.button, globalStyles.green, styles.btn]}
-          onPress={handleNewUser}
-        >
-          <FontAwesomeIcon
-            style={[globalStyles.icon, { color: '#FFF' }]}
-            icon={faCirclePlus}
-          />
-          <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New User</Text>
-        </Pressable>
         <View style={{ alignSelf: 'center' }} >
           <Text style={[globalStyles.label, globalStyles.textCenter]}>View</Text>
           <RadioGroup
@@ -282,6 +272,12 @@ const Customers = () => {
           />
         </Modal>
       }
+      <Pressable
+          style={[globalStyles.green, styles.btn]}
+          onPress={handleNewUser}
+        >
+          <Text style={styles.txtBtn}> + </Text>
+        </Pressable>
     </View>
   )
 }
@@ -293,13 +289,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   btn: {
-    marginTop: 20,
-    marginBottom: 0,
-    marginHorizontal: 30
+    padding: 15,
+    position: 'absolute',
+    borderRadius: 50,
+    right: 15,
+    bottom: 15
   },
   input: {
     marginBottom: 10,
     marginHorizontal: 30
+  },
+  txtBtn: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '600'
   }
 });
 
