@@ -1,11 +1,18 @@
-import { View, Text, Pressable, SafeAreaView, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  SafeAreaView,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import React, {useEffect} from 'react';
 
-import SplashScreen from 'react-native-splash-screen'
+import SplashScreen from 'react-native-splash-screen';
 
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import {useNavigation} from '@react-navigation/native';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 
 import globalStyles from '../styles/styles';
@@ -13,48 +20,40 @@ import globalStyles from '../styles/styles';
 const WelcomeScreen = () => {
   useEffect(() => {
     SplashScreen.hide();
-  }, [])
+  }, []);
   const navigation = useNavigation();
 
   return (
-    <SafeAreaView
-      style={[globalStyles.flex, { backgroundColor: '#FFF' }]}
-    >
+    <SafeAreaView style={[globalStyles.flex, {backgroundColor: '#FFF'}]}>
       <View style={styles.container}>
         <Animatable.View
           animation="pulse"
           easing="ease-out"
           iterationCount="infinite"
-          style={styles.containerImg}
-        >
+          style={styles.containerImg}>
           <Image
-            style={{ height: 220, width: 220 }}
+            style={{height: 220, width: 220}}
             source={require('../assets/logovc.png')}
           />
         </Animatable.View>
-        <Animatable.View
-          animation={'bounceInDown'}
-          delay={1000}
-        >
+        <Animatable.View animation={'bounceInDown'} delay={1000}>
           <Pressable
             style={[globalStyles.button, globalStyles.green]}
             onPress={() => {
-              navigation.navigate('Login');
-            }}
-          >
+              navigation.navigate('Events');
+            }}>
             <FontAwesomeIcon
-              style={[globalStyles.icon, { color: '#FFF' }]}
+              style={[globalStyles.icon, {color: '#FFF'}]}
               icon={faSignInAlt}
             />
-            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> Start</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Start</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View
           animation={'rubberBand'}
           duration={3000}
           iterationCount={2}
-          style={{ marginBottom: 20 }}
-        >
+          style={{marginBottom: 20}}>
           <Text style={styles.title}>Community Cupboard</Text>
           <Text style={styles.subtitle}>Opening hours</Text>
           <Text style={styles.label}>Monday - Wendnesday</Text>
@@ -62,8 +61,8 @@ const WelcomeScreen = () => {
         </Animatable.View>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -80,19 +79,19 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     textAlign: 'center',
     fontSize: 18,
-    fontWeight: '800'
+    fontWeight: '800',
   },
   subtitle: {
     color: '#3E3C02',
     textAlign: 'center',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   label: {
     color: '#796D00',
     textAlign: 'center',
-    fontWeight: '500'
-  }
-})
+    fontWeight: '500',
+  },
+});
 
 export default WelcomeScreen;
