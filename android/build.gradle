@@ -21,6 +21,10 @@ buildscript {
     }
 }
 
+project.ext {
+    excludeAppGlideModule = true
+}
+
 allprojects {
     repositories {
         maven {
