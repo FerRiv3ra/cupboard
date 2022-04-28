@@ -12,7 +12,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
+import {faSignInAlt, faCoffee} from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 
 import globalStyles from '../styles/styles';
@@ -38,15 +38,40 @@ const WelcomeScreen = () => {
         </Animatable.View>
         <Animatable.View animation={'bounceInDown'} delay={1000}>
           <Pressable
-            style={[globalStyles.button, globalStyles.green]}
+            style={[
+              globalStyles.button,
+              globalStyles.green,
+              {marginVertical: 10},
+            ]}
             onPress={() => {
               navigation.navigate('Events');
             }}>
             <FontAwesomeIcon
               style={[globalStyles.icon, {color: '#FFF'}]}
+              icon={faCoffee}
+            />
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+              {' '}
+              Culture Café
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[
+              globalStyles.button,
+              globalStyles.green,
+              {marginVertical: 10},
+            ]}
+            onPress={() => {
+              navigation.navigate('Login');
+            }}>
+            <FontAwesomeIcon
+              style={[globalStyles.icon, {color: '#FFF'}]}
               icon={faSignInAlt}
             />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Start</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+              {' '}
+              Community Cupboard
+            </Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View
@@ -56,7 +81,7 @@ const WelcomeScreen = () => {
           style={{marginBottom: 20}}>
           <Text style={styles.title}>Community Cupboard</Text>
           <Text style={styles.subtitle}>Opening hours</Text>
-          <Text style={styles.label}>Monday - Wendnesday</Text>
+          <Text style={styles.label}>Monday - Wednesday</Text>
           <Text style={styles.label}>10am - 3pm</Text>
         </Animatable.View>
       </View>

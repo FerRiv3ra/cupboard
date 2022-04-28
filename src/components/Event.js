@@ -1,5 +1,7 @@
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import {StyleSheet, Text, View, Dimensions} from 'react-native';
 import React from 'react';
+import FastImage from 'react-native-fast-image';
+
 import {heightScale} from '../helpers/scale';
 const {width, height} = Dimensions.get('window');
 
@@ -9,7 +11,7 @@ const Event = ({item, index}) => {
     'https://res.cloudinary.com/fercloudinary/image/upload/v1650914816/coffee-g6e5e08731_1280_cfaotc.jpg';
   return (
     <View style={styles.view}>
-      <Image
+      <FastImage
         style={styles.img}
         resizeMode="cover"
         source={{
@@ -18,7 +20,9 @@ const Event = ({item, index}) => {
       />
       <View style={styles.info}>
         <Text style={styles.date}>
-          {new Date(item.date).toUTCString().slice(0, 16)}
+          {new Date(item.date).toUTCString().slice(0, 16)}{' '}
+          {new Date(item.date).toUTCString().slice(0, 16) ===
+            new Date().toUTCString().slice(0, 16) && '(Today)'}
         </Text>
         <Text style={styles.title}>{item.title}</Text>
       </View>

@@ -10,12 +10,13 @@ import {
   FlatList,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faBackward} from '@fortawesome/free-solid-svg-icons';
+import {useNavigation} from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
+
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helpers/scale';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
-import {useNavigation} from '@react-navigation/native';
 import Event from '../components/Event';
 
 const Events = () => {
@@ -36,7 +37,9 @@ const Events = () => {
       } catch (error) {
         Alert.alert('Error', 'Network request failed');
       }
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
 
     fetchMyAPI();
@@ -47,25 +50,12 @@ const Events = () => {
       <View style={styles.container}>
         <Animatable.View
           animation="bounceInDown"
-          delay={800}
+          delay={600}
           style={styles.containerImg}>
           <Image
-            style={{height: heightScale(150), width: withScale(160)}}
+            style={{height: heightScale(155), width: withScale(162)}}
             source={require('../assets/culture_cafe.png')}
           />
-        </Animatable.View>
-        <Animatable.View animation="bounceInRight" delay={1000}>
-          <Pressable
-            style={styles.btn}
-            onPress={() => navigation.navigate('Login')}>
-            <View style={{flexDirection: 'row'}}>
-              <FontAwesomeIcon
-                style={[globalStyles.icon, {color: '#FFF'}]}
-                icon={faSignInAlt}
-              />
-              <Text style={styles.txtBtn}> Login</Text>
-            </View>
-          </Pressable>
         </Animatable.View>
       </View>
       <View style={[globalStyles.container, globalStyles.flex]}>
@@ -80,11 +70,26 @@ const Events = () => {
             {isLoading ? 'Loading...' : 'There are no events to show'}
           </Text>
         )}
-        <FlatList
-          data={events}
-          keyExtractor={item => item._id}
-          renderItem={({item, index}) => <Event item={item} index={index} />}
-        />
+        {!isLoading && (
+          <FlatList
+            data={events}
+            keyExtractor={item => item._id}
+            renderItem={({item, index}) => <Event item={item} index={index} />}
+          />
+        )}
+        <Animatable.View animation="bounceInRight" delay={1500} duration={2000}>
+          <Pressable
+            style={[globalStyles.button, styles.btn]}
+            onPress={() => navigation.goBack()}>
+            <View style={{flexDirection: 'row'}}>
+              <FontAwesomeIcon
+                style={[globalStyles.icon, {color: '#FFF'}]}
+                icon={faBackward}
+              />
+              <Text style={styles.txtBtn}> Go Back</Text>
+            </View>
+          </Pressable>
+        </Animatable.View>
       </View>
     </SafeAreaView>
   );
@@ -100,10 +105,8 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#8bd3cd',
     padding: 10,
-    borderRadius: 20,
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
+    marginVertical: 8,
+    marginHorizontal: 30,
   },
   txtBtn: {
     color: '#FFF',
