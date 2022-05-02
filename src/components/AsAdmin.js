@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { Text, View, TextInput, Pressable, Alert, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 import globalStyles from '../styles/styles';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEye, faEyeSlash, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-
+import {useNavigation} from '@react-navigation/native';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faEye,
+  faEyeSlash,
+  faSignInAlt,
+} from '@fortawesome/free-solid-svg-icons';
 
 const AsAdmin = () => {
   const [email, setEmail] = useState('');
@@ -26,20 +36,23 @@ const AsAdmin = () => {
 
     const userLogin = {
       email: email.trim(),
-      password
-    }
+      password,
+    };
 
     try {
-      const response = await fetch('https://grubhubbackend.herokuapp.com/api/auth/login', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        'https://grubhubbackend.herokuapp.com/api/auth/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userLogin),
         },
-        body: JSON.stringify(userLogin)
-      });
+      );
       const user = await response.json();
 
-      const { msg } = user;
+      const {msg} = user;
 
       if (msg !== undefined) {
         Alert.alert('Error', msg);
@@ -58,72 +71,82 @@ const AsAdmin = () => {
       Alert.alert('Error', 'Network request failed');
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <View>
-      <View style={[{ backgroundColor: '#EEE', paddingBottom: 20, borderBottomRightRadius: 50 }]}>
+      <View
+        style={[
+          {
+            backgroundColor: '#EEE',
+            paddingBottom: 20,
+            borderBottomRightRadius: 50,
+          },
+        ]}>
         <View style={globalStyles.view}>
           <Text style={globalStyles.label}>Email</Text>
           <TextInput
             style={[globalStyles.input, globalStyles.shadow]}
-            keyboardType='email-address'
-            placeholder='Email'
+            keyboardType="email-address"
+            placeholder="Email"
             placeholderTextColor={'#666'}
             onChangeText={setEmail}
             value={email}
           />
           <Text style={globalStyles.label}>Password</Text>
-          <View style={{ flexDirection: 'row' }}>
-          <TextInput
-            style={[globalStyles.input, globalStyles.shadow, styles.pass]}
-            secureTextEntry={!passVisible}
-            textContentType='password'
-            placeholder='Password'
-            placeholderTextColor={'#666'}
-            onChangeText={setPassword}
-            value={password}
-          />
-          <Pressable
-            style={styles.btnViewPass}
-            onPress={() => setPassVisible(!passVisible)}>
-            <FontAwesomeIcon
-              style={[globalStyles.icon, { color: '#444' }]}
-              icon={passVisible ? faEyeSlash : faEye}
+          <View style={{flexDirection: 'row'}}>
+            <TextInput
+              style={[globalStyles.input, globalStyles.shadow, styles.pass]}
+              secureTextEntry={!passVisible}
+              textContentType="password"
+              placeholder="Password"
+              placeholderTextColor={'#666'}
+              onChangeText={setPassword}
+              value={password}
             />
-          </Pressable>
+            <Pressable
+              style={styles.btnViewPass}
+              onPress={() => setPassVisible(!passVisible)}>
+              <FontAwesomeIcon
+                style={[globalStyles.icon, {color: '#444'}]}
+                icon={passVisible ? faEyeSlash : faEye}
+              />
+            </Pressable>
           </View>
         </View>
       </View>
       <Pressable
-        style={[globalStyles.button, { marginHorizontal: 30, marginTop: 20 }, isLoading ? globalStyles.gray : globalStyles.orange]}
+        style={[
+          globalStyles.button,
+          {marginHorizontal: 30, marginTop: 20},
+          isLoading ? globalStyles.gray : globalStyles.orange,
+        ]}
         onPress={handleLogin}
-        disabled={isLoading}
-      >
+        disabled={isLoading}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, { color: '#000' }]}
+          style={[globalStyles.icon, {color: '#000'}]}
           icon={faSignInAlt}
         />
         <Text style={globalStyles.textBtn}> Login</Text>
       </Pressable>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  btnViewPass: { 
-    flexDirection: 'column', 
+  btnViewPass: {
+    flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: '#FFF',
     padding: 15,
     borderBottomEndRadius: 10,
     borderTopRightRadius: 10,
     position: 'absolute',
-    right: 0
+    right: 0,
   },
   pass: {
     flex: 1,
   },
-})
+});
 
 export default AsAdmin;

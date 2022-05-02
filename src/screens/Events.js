@@ -45,6 +45,10 @@ const Events = () => {
     fetchMyAPI();
   }, []);
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <SafeAreaView style={[globalStyles.flex, {backgroundColor: '#FFF'}]}>
       <View style={styles.container}>
@@ -80,7 +84,7 @@ const Events = () => {
         <Animatable.View animation="bounceInRight" delay={1500} duration={2000}>
           <Pressable
             style={[globalStyles.button, styles.btn]}
-            onPress={() => navigation.goBack()}>
+            onPress={() => goBack()}>
             <View style={{flexDirection: 'row'}}>
               <FontAwesomeIcon
                 style={[globalStyles.icon, {color: '#FFF'}]}

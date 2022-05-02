@@ -33,9 +33,6 @@ const ModalReport = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSentEmail, setIsSentEmail] = useState(false);
 
-  const totalItems = data.reduce((tot, item) => {
-    return tot + item.amount;
-  }, 0);
   const visits = data.length;
 
   const people = users.length;

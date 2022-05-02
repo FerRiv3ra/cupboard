@@ -4,7 +4,6 @@ import {
   View,
   Pressable,
   Alert,
-  TextInput,
   ActivityIndicator,
   SafeAreaView,
 } from 'react-native';
@@ -20,8 +19,6 @@ import {useNavigation} from '@react-navigation/native';
 
 const ModalNewDelivery = ({uid, resetData}) => {
   const [user, setUser] = useState({});
-  // const [totalItems, setTotalItems] = useState('');
-  // const [toiletries, setToiletries] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation();
@@ -88,31 +85,8 @@ const ModalNewDelivery = ({uid, resetData}) => {
   }
 
   const handleSubmit = async () => {
-    // if (totalItems === '' || totalItems === '0') {
-    //   Alert.alert('Error', 'Total items is required');
-    //   return;
-    // }
-
-    // if (user.no_household - user.child_cant === 1 && totalItems > 15) {
-    //   Alert.alert('Error', 'You cannot exceed the total allowable number of items');
-    //   return;
-    // }
-
-    // if (user.no_household - user.child_cant > 1 && totalItems > 20) {
-    //   Alert.alert('Error', 'You cannot exceed the total allowable number of items');
-    //   return;
-    // }
-
-    // if (Number(toiletries) > user.toiletries) {
-    //   Alert.alert('Error', 'You cannot exceed the total allowable number of toiletries');
-    //   return;
-    // }
-
     const token = await AsyncStorage.getItem('token');
     const data = {
-      // amount: toiletries === '' ? Number(totalItems) : Number(toiletries) + Number(totalItems),
-      // cant_toiletries: toiletries === '' ? 0 : Number(toiletries),
-      amount: 1,
       customer_id: user.customer_id,
       cant_toiletries: 0,
       uid,
@@ -188,26 +162,6 @@ const ModalNewDelivery = ({uid, resetData}) => {
               <Text style={styles.label}>Total visits:</Text> {user.visits}
             </Text>
           </View>
-          {/* <TextInput
-            style={globalStyles.input}
-            placeholder='Total items'
-            keyboardType='number-pad'
-            placeholderTextColor={'#666'}
-            onChangeText={setTotalItems}
-            value={totalItems}
-            textAlign={'center'}
-            maxLength={2}
-          />
-          {user.toiletries !== 0 && <TextInput
-            style={[globalStyles.input, { marginTop: 10 }]}
-            placeholder='Toiletries'
-            keyboardType='number-pad'
-            placeholderTextColor={'#666'}
-            onChangeText={setToiletries}
-            value={toiletries}
-            textAlign={'center'}
-            maxLength={1}
-          />} */}
           <Pressable
             style={[styles.button, globalStyles.green]}
             onPress={() => handleSubmit()}>

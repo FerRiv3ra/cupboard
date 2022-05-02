@@ -36,44 +36,48 @@ const WelcomeScreen = () => {
             source={require('../assets/logovc.png')}
           />
         </Animatable.View>
-        <Animatable.View animation={'bounceInDown'} delay={1000}>
-          <Pressable
-            style={[
-              globalStyles.button,
-              globalStyles.green,
-              {marginVertical: 10},
-            ]}
-            onPress={() => {
-              navigation.navigate('Events');
-            }}>
-            <FontAwesomeIcon
-              style={[globalStyles.icon, {color: '#FFF'}]}
-              icon={faCoffee}
-            />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-              {' '}
-              Culture Café
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[
-              globalStyles.button,
-              globalStyles.green,
-              {marginVertical: 10},
-            ]}
-            onPress={() => {
-              navigation.navigate('Login');
-            }}>
-            <FontAwesomeIcon
-              style={[globalStyles.icon, {color: '#FFF'}]}
-              icon={faSignInAlt}
-            />
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-              {' '}
-              Community Cupboard
-            </Text>
-          </Pressable>
-        </Animatable.View>
+        <View>
+          <Animatable.View animation={'fadeInLeftBig'} delay={1000}>
+            <Pressable
+              style={[
+                globalStyles.button,
+                globalStyles.green,
+                {marginVertical: 10},
+              ]}
+              onPress={() => {
+                navigation.navigate('Events');
+              }}>
+              <FontAwesomeIcon
+                style={[globalStyles.icon, {color: '#FFF'}]}
+                icon={faCoffee}
+              />
+              <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+                {' '}
+                Culture Café
+              </Text>
+            </Pressable>
+          </Animatable.View>
+          <Animatable.View animation={'fadeInRightBig'} delay={1000}>
+            <Pressable
+              style={[
+                globalStyles.button,
+                globalStyles.green,
+                {marginVertical: 10},
+              ]}
+              onPress={() => {
+                navigation.navigate('Login');
+              }}>
+              <FontAwesomeIcon
+                style={[globalStyles.icon, {color: '#FFF'}]}
+                icon={faSignInAlt}
+              />
+              <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+                {' '}
+                Community Cupboard
+              </Text>
+            </Pressable>
+          </Animatable.View>
+        </View>
         <Animatable.View
           animation={'rubberBand'}
           duration={3000}
