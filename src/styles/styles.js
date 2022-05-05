@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const globalStyles = StyleSheet.create({
   dateContainer: {
@@ -11,7 +11,7 @@ const globalStyles = StyleSheet.create({
     marginTop: 15,
     fontSize: 20,
     fontWeight: '600',
-    color: '#444'
+    color: '#444',
   },
   textCenter: {
     textAlign: 'center',
@@ -27,23 +27,23 @@ const globalStyles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '700',
-    fontSize: 16
+    fontSize: 16,
   },
   input: {
     backgroundColor: '#FFF',
     padding: 15,
-    borderRadius: 10
+    borderRadius: 10,
   },
   icon: {
     alignSelf: 'center',
-    color: '#FFF'
+    color: '#FFF',
   },
   view: {
     marginHorizontal: 30,
-    marginBottom: 15
+    marginBottom: 15,
   },
   shadow: {
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 5,
@@ -63,26 +63,29 @@ const globalStyles = StyleSheet.create({
     backgroundColor: '#B7DCCC',
   },
   white: {
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
   },
   ccOlive: {
-    backgroundColor: '#796D00'
+    backgroundColor: '#796D00',
   },
   ccGreen: {
-    backgroundColor: '#3A6621'
+    backgroundColor: '#3A6621',
+  },
+  ccDarkGreen: {
+    backgroundColor: '#006c4f',
   },
   ccBrown: {
-    backgroundColor: '#AE8103'
+    backgroundColor: '#AE8103',
   },
   ccDark: {
-    backgroundColor: '#3E3C02'
+    backgroundColor: '#3E3C02',
   },
   gray: {
-    backgroundColor: '#555'
+    backgroundColor: '#555',
   },
   flex: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default globalStyles;

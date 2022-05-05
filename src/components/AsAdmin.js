@@ -66,7 +66,7 @@ const AsAdmin = () => {
       setEmail('');
       setPassword('');
       setIsLoading(false);
-      navigation.navigate('AdminMainScreen');
+      navigation.navigate('Cupboard');
     } catch (error) {
       Alert.alert('Error', 'Network request failed');
       setIsLoading(false);

@@ -24,9 +24,17 @@ const ModalUser = ({
   fromUsers,
 }) => {
   const FromCus = fromUsers === undefined ? false : true;
-  const {last, customer_id, name, no_household, uid, visits, blocked} = !FromCus
-    ? userLogged['user']
-    : fromUsers.user;
+  const {
+    last,
+    customer_id,
+    name,
+    email,
+    no_household,
+    uid,
+    visits,
+    blocked,
+    phone,
+  } = !FromCus ? userLogged['user'] : fromUsers.user;
   const logoFromFile = require('../assets/logovc.png');
 
   useEffect(() => {
@@ -94,12 +102,27 @@ const ModalUser = ({
             Last visit: {''}
             <Text style={styles.textInfo}>{last ? last : 'First visit'}</Text>
           </Text>
+          {FromCus && !email.includes('@default') && (
+            <Text style={styles.title}>
+              Email: {''}
+              <Text style={styles.email}>{email}</Text>
+            </Text>
+          )}
+          {FromCus && (
+            <Text style={styles.title}>
+              Phone: {''}
+              <Text style={styles.textInfo}>{phone}</Text>
+            </Text>
+          )}
           <Text style={[styles.title, globalStyles.textCenter]}>
             {FromCus ? 'This user have ' : 'You have '}
             <Text style={styles.textInfo}>
               {blocked ? 0 : visits === 0 ? 4 : 4 - (visits % 4)}{' '}
             </Text>
             visits left
+          </Text>
+          <Text style={[styles.title, globalStyles.textCenter]}>
+            Total visits: <Text style={styles.textInfo}>{visits}</Text>
           </Text>
         </Animatable.View>
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
@@ -115,6 +138,34 @@ const ModalUser = ({
               {FromCus ? ' Exit' : ' Logout'}
             </Text>
           </Pressable>
+        </Animatable.View>
+        <Animatable.View
+          animation={'zoomInDown'}
+          delay={800}
+          style={{marginBottom: 15}}>
+          {!FromCus ? (
+            <>
+              <Text style={[styles.title, globalStyles.textCenter]}>
+                Contact details
+              </Text>
+              <Text style={globalStyles.textCenter}>
+                communitycupboard@thevinecentre.org.uk
+              </Text>
+              <Text style={[globalStyles.textCenter, styles.textInfo]}>
+                01252 400196
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text style={globalStyles.textCenter}>
+                This user agrees that{' '}
+              </Text>
+              <Text style={globalStyles.textCenter}>
+                <Text style={styles.textInfo}>The Vine Centre</Text> store their
+                data
+              </Text>
+            </>
+          )}
         </Animatable.View>
       </ScrollView>
     </SafeAreaView>

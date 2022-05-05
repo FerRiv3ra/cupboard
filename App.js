@@ -56,7 +56,7 @@ const App = () => {
           component={Cupboard}
           options={{
             title: 'Community Cupboard',
-            headerShown: true,
+            headerShown: false,
           }}
         />
         <Stack.Screen
