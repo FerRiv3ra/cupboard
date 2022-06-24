@@ -164,7 +164,6 @@ const FormUser = props => {
         <DatePicker
           androidVariant="nativeAndroid"
           date={date}
-          maximumDate={today}
           mode="date"
           onDateChange={selectedDate => handleDate(selectedDate)}
         />

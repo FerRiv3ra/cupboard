@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, Pressable, Alert, Modal } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Text, View, TextInput, Pressable, Alert, Modal} from 'react-native';
 
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import DatePicker from 'react-native-date-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -16,10 +16,12 @@ const AsUser = () => {
       customer_id: '',
       name: '',
       noPeople: 0,
-      uid: ''
-    }
-  }
-  const today = new Date();
+      uid: '',
+    },
+  };
+  let today = new Date();
+  today.setHours(0);
+  today.setMinutes(0);
   const [date, setDate] = useState(today);
   const [customerId, setCustomerId] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,7 +33,7 @@ const AsUser = () => {
       const user = JSON.parse(await AsyncStorage.getItem('user'));
       if (user) {
         const [d, m, y] = user.dob.split('/');
-        const dob = new Date(`${y}-${m}-${d}`)
+        const dob = new Date(`${y}-${m}-${d}`);
         setCustomerId(user.customer_id.toString());
         setDate(dob);
       }
@@ -40,18 +42,19 @@ const AsUser = () => {
     checkSession();
   }, []);
 
-  const handleDate = (selectedDate) => {
+  const handleDate = selectedDate => {
     let date = selectedDate;
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+    date.setMinutes(0);
+    date.setHours(0);
 
     setDate(date);
-  }
+  };
 
   const resetState = async () => {
     setDate(today);
     setCustomerId('');
     setUserLogged(userModel);
-  }
+  };
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -66,17 +69,20 @@ const AsUser = () => {
 
     const userLogin = {
       customer_id: Number(customerId),
-      dob: `${d}/${m}/${y}`
-    }
+      dob: `${d}/${m}/${y}`,
+    };
 
     try {
-      const response = await fetch('https://grubhubbackend.herokuapp.com/api/auth/login-user', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        'https://grubhubbackend.herokuapp.com/api/auth/login-user',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userLogin),
         },
-        body: JSON.stringify(userLogin)
-      });
+      );
       const user = await response.json();
 
       if (user['msg'] !== undefined) {
@@ -95,17 +101,24 @@ const AsUser = () => {
       Alert.alert('Error', 'Network request failed');
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <View>
-      <View style={[{ backgroundColor: '#EEE', paddingBottom: 20, borderBottomRightRadius: 50 }]}>
+      <View
+        style={[
+          {
+            backgroundColor: '#EEE',
+            paddingBottom: 20,
+            borderBottomRightRadius: 50,
+          },
+        ]}>
         <View style={globalStyles.view}>
           <Text style={globalStyles.label}>Customer ID</Text>
           <TextInput
             style={[globalStyles.input, globalStyles.shadow]}
-            keyboardType='number-pad'
-            placeholder='Customer ID'
+            keyboardType="number-pad"
+            placeholder="Customer ID"
             placeholderTextColor={'#666'}
             value={customerId}
             onChangeText={setCustomerId}
@@ -113,30 +126,29 @@ const AsUser = () => {
           <Text style={globalStyles.label}>Date of birth</Text>
           <View style={[globalStyles.dateContainer, globalStyles.shadow]}>
             <DatePicker
-              androidVariant='nativeAndroid'
+              androidVariant="nativeAndroid"
               date={date}
-              maximumDate={today}
-              mode='date'
-              onDateChange={(selectedDate) => handleDate(selectedDate)}
+              mode="date"
+              onDateChange={selectedDate => handleDate(selectedDate)}
             />
           </View>
         </View>
       </View>
       <Pressable
-        style={[globalStyles.button, { marginHorizontal: 30, marginTop: 20 }, isLoading ? globalStyles.gray : globalStyles.orange]}
+        style={[
+          globalStyles.button,
+          {marginHorizontal: 30, marginTop: 20},
+          isLoading ? globalStyles.gray : globalStyles.orange,
+        ]}
         onPress={() => handleLogin()}
-        disabled={isLoading}
-      >
+        disabled={isLoading}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, { color: '#000' }]}
+          style={[globalStyles.icon, {color: '#000'}]}
           icon={faSignInAlt}
         />
         <Text style={globalStyles.textBtn}> Login</Text>
       </Pressable>
-      <Modal
-        animationType='slide'
-        visible={modalVisible}
-      >
+      <Modal animationType="slide" visible={modalVisible}>
         <ModalUser
           userLogged={userLogged}
           setModalVisible={setModalVisible}
@@ -145,7 +157,7 @@ const AsUser = () => {
         />
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 export default AsUser;
