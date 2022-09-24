@@ -119,15 +119,15 @@ const AsAdmin = () => {
         style={[
           globalStyles.button,
           {marginHorizontal: 30, marginTop: 20},
-          isLoading ? globalStyles.gray : globalStyles.orange,
+          isLoading ? globalStyles.gray : globalStyles.green,
         ]}
         onPress={handleLogin}
         disabled={isLoading}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#000'}]}
+          style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faSignInAlt}
         />
-        <Text style={globalStyles.textBtn}> Login</Text>
+        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
       </Pressable>
     </View>
   );

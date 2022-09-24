@@ -8,33 +8,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import globalStyles from '../styles/styles';
 import ModalUser from './ModalUser';
+import useAppContext from '../hooks/useAppContext';
+import moment from 'moment';
 
 const AsUser = () => {
-  const userModel = {
-    user: {
-      child: false,
-      customer_id: '',
-      name: '',
-      noPeople: 0,
-      uid: '',
-    },
-  };
-  let today = new Date();
-  today.setHours(0);
-  today.setMinutes(0);
+  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00+00`);
+
   const [date, setDate] = useState(today);
   const [customerId, setCustomerId] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [userLogged, setUserLogged] = useState(userModel);
   const [isLoading, setIsLoading] = useState(false);
+
+  const {userLogin} = useAppContext();
 
   useEffect(() => {
     async function checkSession() {
       const user = JSON.parse(await AsyncStorage.getItem('user'));
       if (user) {
-        const [d, m, y] = user.dob.split('/');
-        const dob = new Date(`${y}-${m}-${d}`);
-        setCustomerId(user.customer_id.toString());
+        const [d, m, y] = user.dob.slice(0, 10).split('/');
+        const dob = new Date(`${y}-${m}-${d}T00:00:00+00`);
+        setCustomerId(user.customerId.toString());
         setDate(dob);
       }
     }
@@ -43,9 +36,9 @@ const AsUser = () => {
   }, []);
 
   const handleDate = selectedDate => {
-    let date = selectedDate;
-    date.setMinutes(0);
-    date.setHours(0);
+    let date = new Date(
+      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00+00`,
+    );
 
     setDate(date);
   };
@@ -53,54 +46,32 @@ const AsUser = () => {
   const resetState = async () => {
     setDate(today);
     setCustomerId('');
-    setUserLogged(userModel);
   };
 
   const handleLogin = async () => {
     setIsLoading(true);
 
-    if ([date, customerId].includes('')) {
-      Alert.alert('Error', 'Customer ID is required');
+    if (!customerId.length) {
+      Alert.alert('Error', 'Visitor ID is required');
       setIsLoading(false);
       return;
     }
 
-    const [y, m, d] = date.toISOString().slice(0, 10).split('-');
+    const resp = await userLogin(customerId, date);
 
-    const userLogin = {
-      customer_id: Number(customerId),
-      dob: `${d}/${m}/${y}`,
-    };
-
-    try {
-      const response = await fetch(
-        'https://grubhubbackend.herokuapp.com/api/auth/login-user',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userLogin),
-        },
-      );
-      const user = await response.json();
-
-      if (user['msg'] !== undefined) {
-        Alert.alert('Error', user['msg']);
-        setIsLoading(false);
-        return;
-      }
-
-      await AsyncStorage.setItem('user', JSON.stringify(user.user));
-
-      setUserLogged(user);
+    if (!resp.ok) {
+      Alert.alert('Error', resp.msg);
       setIsLoading(false);
-      setModalVisible(!modalVisible);
-    } catch (error) {
-      console.log('Error', error);
-      Alert.alert('Error', 'Network request failed');
-      setIsLoading(false);
+      return;
     }
+
+    await AsyncStorage.setItem(
+      'user',
+      JSON.stringify({customerId: resp.user.customerId, dob: resp.user.dob}),
+    );
+
+    setIsLoading(false);
+    setModalVisible(true);
   };
 
   return (
@@ -114,11 +85,11 @@ const AsUser = () => {
           },
         ]}>
         <View style={globalStyles.view}>
-          <Text style={globalStyles.label}>Customer ID</Text>
+          <Text style={globalStyles.label}>Visitor ID</Text>
           <TextInput
             style={[globalStyles.input, globalStyles.shadow]}
             keyboardType="number-pad"
-            placeholder="Customer ID"
+            placeholder="Visitor ID"
             placeholderTextColor={'#666'}
             value={customerId}
             onChangeText={setCustomerId}
@@ -138,19 +109,18 @@ const AsUser = () => {
         style={[
           globalStyles.button,
           {marginHorizontal: 30, marginTop: 20},
-          isLoading ? globalStyles.gray : globalStyles.orange,
+          isLoading ? globalStyles.gray : globalStyles.green,
         ]}
         onPress={() => handleLogin()}
         disabled={isLoading}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#000'}]}
+          style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faSignInAlt}
         />
-        <Text style={globalStyles.textBtn}> Login</Text>
+        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
       </Pressable>
       <Modal animationType="slide" visible={modalVisible}>
         <ModalUser
-          userLogged={userLogged}
           setModalVisible={setModalVisible}
           modalVisible={modalVisible}
           resetState={resetState}

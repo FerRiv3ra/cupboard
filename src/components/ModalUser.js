@@ -15,38 +15,28 @@ import QRCode from 'react-native-qrcode-svg';
 import globalStyles from '../styles/styles';
 
 import * as Animatable from 'react-native-animatable';
+import useAppContext from '../hooks/useAppContext';
 
-const ModalUser = ({
-  userLogged,
-  setModalVisible,
-  modalVisible,
-  resetState,
-  fromUsers,
-}) => {
-  const FromCus = fromUsers === undefined ? false : true;
-  const {
-    last,
-    customer_id,
-    name,
-    email,
-    no_household,
-    uid,
-    visits,
-    blocked,
-    phone,
-  } = !FromCus ? userLogged['user'] : fromUsers.user;
+const ModalUser = ({setModalVisible, modalVisible, resetState, fromUsers}) => {
+  const fromAdmin = fromUsers !== undefined;
+
+  const {visitorUser} = useAppContext();
   const logoFromFile = require('../assets/logovc.png');
 
   useEffect(() => {
-    if (!FromCus) {
-      if (visits % 4 === 3) {
+    if (!fromAdmin) {
+      if (visitorUser.visits % 4 === 3) {
         Alert.alert(
           'Information',
           'One more visit and then a review must be booked',
         );
       }
 
-      if (blocked && visits !== 0 && visits % 4 === 0) {
+      if (
+        visitorUser.blocked &&
+        visitorUser.visits !== 0 &&
+        visitorUser.visits % 4 === 0
+      ) {
         Alert.alert(
           'Information',
           'You must be book a review, please contact the staff',
@@ -56,7 +46,7 @@ const ModalUser = ({
   }, []);
 
   const logout = () => {
-    if (FromCus) {
+    if (fromAdmin) {
       fromUsers.resetState();
     } else {
       resetState();
@@ -72,11 +62,11 @@ const ModalUser = ({
           animation={'bounceIn'}
           duration={2000}
           delay={300}>
-          {uid !== '' && (
+          {visitorUser.uid !== '' && (
             <QRCode
               color="#336210"
               backgroundColor="#FFF"
-              value={uid}
+              value={visitorUser.uid}
               logo={logoFromFile}
               logoSize={60}
               size={250}
@@ -90,52 +80,55 @@ const ModalUser = ({
           delay={300}>
           <View style={styles.idContainer}>
             <Text style={styles.textId}>
-              {blocked ? 'Blocked' : `#${customer_id}`}
+              {visitorUser.blocked ? 'Blocked' : `#${visitorUser.customerId}`}
             </Text>
           </View>
-          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.name}>
+            {visitorUser.firstName} {visitorUser.lastName}
+          </Text>
           <Text style={styles.title}>
             Number household: {''}
-            <Text style={styles.textInfo}>{no_household}</Text>
+            <Text style={styles.textInfo}>{visitorUser.noHousehold}</Text>
           </Text>
           <Text style={styles.title}>
             Last visit: {''}
-            <Text style={styles.textInfo}>{last ? last : 'First visit'}</Text>
-          </Text>
-          {FromCus && !email.includes('@default') && (
-            <Text style={styles.title}>
-              Email: {''}
-              <Text style={styles.email}>{email}</Text>
+            <Text style={styles.textInfo}>
+              {visitorUser.lastVisit ? visitorUser.lastVisit : 'First visit'}
             </Text>
-          )}
-          {FromCus && (
+          </Text>
+          {fromAdmin && (
             <Text style={styles.title}>
               Phone: {''}
-              <Text style={styles.textInfo}>{phone}</Text>
+              <Text style={styles.textInfo}>{visitorUser.phone}</Text>
             </Text>
           )}
           <Text style={[styles.title, globalStyles.textCenter]}>
-            {FromCus ? 'This user have ' : 'You have '}
+            {fromAdmin ? 'This user have ' : 'You have '}
             <Text style={styles.textInfo}>
-              {blocked ? 0 : visits === 0 ? 4 : 4 - (visits % 4)}{' '}
+              {visitorUser.blocked
+                ? 0
+                : visitorUser.visits === 0
+                ? 4
+                : 4 - (visitorUser.visits % 4)}{' '}
             </Text>
             visits left
           </Text>
           <Text style={[styles.title, globalStyles.textCenter]}>
-            Total visits: <Text style={styles.textInfo}>{visits}</Text>
+            Total visits:{' '}
+            <Text style={styles.textInfo}>{visitorUser.visits}</Text>
           </Text>
         </Animatable.View>
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
           <Pressable
             style={[
               globalStyles.button,
-              globalStyles.green,
+              globalStyles.orange,
               {marginHorizontal: 30},
             ]}
             onPress={logout}>
             <FontAwesomeIcon style={globalStyles.icon} icon={faSignOut} />
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-              {FromCus ? ' Exit' : ' Logout'}
+              {fromAdmin ? ' Exit' : ' Logout'}
             </Text>
           </Pressable>
         </Animatable.View>
@@ -143,7 +136,7 @@ const ModalUser = ({
           animation={'zoomInDown'}
           delay={800}
           style={{marginBottom: 15}}>
-          {!FromCus ? (
+          {!fromAdmin ? (
             <>
               <Text style={[styles.title, globalStyles.textCenter]}>
                 Contact details
