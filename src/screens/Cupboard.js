@@ -1,7 +1,7 @@
 import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import globalStyles from '../styles/styles';
-import {useNavigation} from '@react-navigation/native';
+import {StackActions, useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faFileInvoice,
@@ -22,7 +22,7 @@ const Cupboard = () => {
       console.log(error);
     }
 
-    navigation.navigate('Login');
+    navigation.dispatch(StackActions.pop(2));
   };
 
   return (

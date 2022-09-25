@@ -120,11 +120,7 @@ const ModalUser = ({setModalVisible, modalVisible, resetState, fromUsers}) => {
         </Animatable.View>
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
           <Pressable
-            style={[
-              globalStyles.button,
-              globalStyles.orange,
-              {marginHorizontal: 30},
-            ]}
+            style={[globalStyles.button, globalStyles.orange, {margin: 30}]}
             onPress={logout}>
             <FontAwesomeIcon style={globalStyles.icon} icon={faSignOut} />
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>

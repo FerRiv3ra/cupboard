@@ -12,7 +12,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSignInAlt, faCoffee} from '@fortawesome/free-solid-svg-icons';
+import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 
 import globalStyles from '../styles/styles';

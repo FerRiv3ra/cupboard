@@ -17,7 +17,6 @@ const globalStyles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    marginVertical: 40,
     paddingVertical: 15,
     borderRadius: 10,
     flexDirection: 'row',

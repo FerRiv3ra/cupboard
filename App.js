@@ -13,6 +13,11 @@ import NewDelivery from './src/screens/NewDelivery';
 import NewReport from './src/screens/NewReport';
 import Events from './src/screens/Events';
 import {AppProvider} from './src/context/AppContext';
+import VerifyLogin from './src/screens/VerifyLogin';
+import SignUp from './src/screens/SignUp';
+import ForgotPassword from './src/screens/ForgotPassword';
+import NewPassword from './src/screens/NewPassword';
+import VerifyTokenForgot from './src/screens/VerifyTokenForgot';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +47,46 @@ const App = () => {
             component={Login}
             options={{
               title: 'Login',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="VerifyLogin"
+            component={VerifyLogin}
+            options={{
+              title: 'Verify Login',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{
+              title: 'Sign Up',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPassword}
+            options={{
+              title: 'Forgot Password',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="VerifyTokenForgot"
+            component={VerifyTokenForgot}
+            options={{
+              title: 'VerifyTokenForgot',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="NewPassword"
+            component={NewPassword}
+            options={{
+              title: 'New Password',
               headerShown: false,
             }}
           />

@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import globalStyles from '../styles/styles';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -17,6 +16,7 @@ import {
   faEyeSlash,
   faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
+import useAppContext from '../hooks/useAppContext';
 
 const AsAdmin = () => {
   const [email, setEmail] = useState('');
@@ -24,9 +24,11 @@ const AsAdmin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [passVisible, setPassVisible] = useState(false);
 
+  const {adminLogin} = useAppContext();
   const navigation = useNavigation();
 
   const handleLogin = async () => {
+    // TODO: Agregar remember me, signup, forgot password and token
     setIsLoading(true);
     if ([email, password].includes('')) {
       Alert.alert('Error', 'Email and password are required');
@@ -34,43 +36,18 @@ const AsAdmin = () => {
       return;
     }
 
-    const userLogin = {
-      email: email.trim(),
-      password,
-    };
+    const resp = await adminLogin(email.trim(), password);
 
-    try {
-      const response = await fetch(
-        'https://grubhubbackend.herokuapp.com/api/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userLogin),
-        },
-      );
-      const user = await response.json();
-
-      const {msg} = user;
-
-      if (msg !== undefined) {
-        Alert.alert('Error', msg);
-        setIsLoading(false);
-        return;
-      }
-      await AsyncStorage.setItem('uid', user.user.uid);
-
-      await AsyncStorage.setItem('token', user['token']);
-
-      setEmail('');
-      setPassword('');
+    if (!resp.ok) {
+      Alert.alert('Error', resp.msg);
       setIsLoading(false);
-      navigation.navigate('Cupboard');
-    } catch (error) {
-      Alert.alert('Error', 'Network request failed');
-      setIsLoading(false);
+      return;
     }
+
+    setEmail('');
+    setPassword('');
+    setIsLoading(false);
+    navigation.navigate('VerifyLogin');
   };
 
   return (
@@ -79,7 +56,6 @@ const AsAdmin = () => {
         style={[
           {
             backgroundColor: '#EEE',
-            paddingBottom: 20,
             borderBottomRightRadius: 50,
           },
         ]}>
@@ -113,12 +89,17 @@ const AsAdmin = () => {
               />
             </Pressable>
           </View>
+          <Pressable
+            style={styles.forgot}
+            onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text style={styles.textLinks}>Forgot password?</Text>
+          </Pressable>
         </View>
       </View>
       <Pressable
         style={[
           globalStyles.button,
-          {marginHorizontal: 30, marginTop: 20},
+          {marginHorizontal: 30, marginTop: 15},
           isLoading ? globalStyles.gray : globalStyles.green,
         ]}
         onPress={handleLogin}
@@ -128,6 +109,16 @@ const AsAdmin = () => {
           icon={faSignInAlt}
         />
         <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
+      </Pressable>
+      <Pressable
+        style={styles.signUp}
+        onPress={() => navigation.navigate('SignUp')}>
+        <Text style={styles.textLinks}>Don't have an account? Sign Up</Text>
+      </Pressable>
+      <Pressable
+        style={styles.signUp}
+        onPress={() => navigation.navigate('VerifyLogin')}>
+        <Text style={styles.textLinks}>Have you already received a token?</Text>
       </Pressable>
     </View>
   );
@@ -143,6 +134,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     position: 'absolute',
     right: 0,
+  },
+  forgot: {
+    marginTop: 12,
+    alignSelf: 'flex-end',
+    padding: 5,
+  },
+  textLinks: {
+    fontWeight: '500',
+    color: '#333',
+  },
+  signUp: {
+    alignSelf: 'center',
+    marginTop: 12,
+    padding: 5,
   },
   pass: {
     flex: 1,
