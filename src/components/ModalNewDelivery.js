@@ -6,22 +6,23 @@ import {
   Alert,
   ActivityIndicator,
   SafeAreaView,
+  Modal,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import globalStyles from '../styles/styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import useAppContext from '../hooks/useAppContext';
+import ModalDonation from './ModalDonation';
 
 const ModalNewDelivery = ({uid, resetData}) => {
   const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const navigation = useNavigation();
+  const {getOneVisitor, verifyCanTake} = useAppContext();
 
   useEffect(() => {
     setIsLoading(true);
@@ -40,19 +41,18 @@ const ModalNewDelivery = ({uid, resetData}) => {
       }
 
       try {
-        let response = await fetch(
-          `https://grubhubbackend.herokuapp.com/api/users/${uid}`,
-        );
-        response = await response.json();
+        const resp = await getOneVisitor(uid);
 
-        if (response['errors']) {
-          Alert.alert('Error', response['errors'][0].msg, [
+        if (!resp.ok) {
+          Alert.alert('Error', resp.msg, [
             {text: 'OK', onPress: () => resetData()},
           ]);
           return;
         }
 
-        if (response.blocked) {
+        const {user} = resp;
+
+        if (user.blocked) {
           Alert.alert(
             'Error',
             'This user needs to book a review, please contact the staff',
@@ -61,22 +61,17 @@ const ModalNewDelivery = ({uid, resetData}) => {
           return;
         }
 
-        if (response) {
-          let canTake = await fetch(
-            `https://grubhubbackend.herokuapp.com/api/deliveries/${response.customer_id}`,
-          );
-          canTake = await canTake.json();
+        const canTake = await verifyCanTake(user.customerId);
 
-          if (canTake['error']) {
-            Alert.alert('Error', canTake.error, [
-              {text: 'OK', onPress: () => resetData()},
-            ]);
-            return;
-          }
-
-          setIsLoading(false);
-          setUser(response);
+        if (!canTake.ok) {
+          Alert.alert('Error', canTake.msg, [
+            {text: 'OK', onPress: () => resetData()},
+          ]);
+          return;
         }
+
+        setIsLoading(false);
+        setUser(user);
       } catch (error) {
         Alert.alert('Error', 'Network request failed');
         setIsLoading(false);
@@ -84,47 +79,8 @@ const ModalNewDelivery = ({uid, resetData}) => {
     }
   }
 
-  const handleSubmit = async () => {
-    const token = await AsyncStorage.getItem('token');
-    const data = {
-      customer_id: user.customer_id,
-      cant_toiletries: 0,
-      uid,
-    };
-
-    try {
-      const response = await fetch(
-        'https://grubhubbackend.herokuapp.com/api/deliveries',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-token': token,
-          },
-          body: JSON.stringify(data),
-        },
-      );
-      const delivery = await response.json();
-
-      if (delivery['_id']) {
-        Alert.alert('Success', 'Visit saved', [
-          {
-            text: 'OK',
-            onPress: () => {
-              resetData();
-              navigation.goBack();
-            },
-          },
-        ]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
-    <KeyboardAwareScrollView
-      style={[globalStyles.lightGreen, globalStyles.flex]}>
+    <View style={[globalStyles.lightGreen, globalStyles.flex]}>
       {isLoading ? (
         <ActivityIndicator animating={isLoading} size="large" />
       ) : (
@@ -138,25 +94,26 @@ const ModalNewDelivery = ({uid, resetData}) => {
           </Pressable>
           <View style={[styles.info, globalStyles.shadow]}>
             <Text style={styles.title}>
-              <Text style={styles.label}>{user.name}</Text>
+              <Text style={styles.label}>
+                {user.firstName} {user.lastName}
+              </Text>
             </Text>
             <Text style={[styles.txt]}>
-              {user.no_household - user.child_cant === 1
+              {user.noHousehold - user.childCant === 1
                 ? 'Single '
-                : `${user.no_household} in household `}
-              {user.child_cant === 0
+                : `${user.noHousehold} in household `}
+              {user.childCant === 0
                 ? '(0 children)'
-                : user.child_cant === 1
+                : user.childCant === 1
                 ? '(1 child)'
-                : `(${user.child_cant} children)`}
+                : `(${user.childCant} children)`}
             </Text>
             <Text style={styles.txt}>
-              {user.no_household - user.child_cant === 1 ? 15 : 20}{' '}
-              {`items, ${user.toiletries} toiletries.`}
+              {user.noHousehold - user.childCant === 1 ? 15 : 20} items.
             </Text>
             <Text style={styles.txt}>
               <Text style={styles.label}>Last visit:</Text>{' '}
-              {user.last === '' ? 'First visit' : user.last}
+              {user.lastVisit === '' ? 'First visit' : user.lastVisit}
             </Text>
             <Text style={styles.txt}>
               <Text style={styles.label}>Total visits:</Text> {user.visits}
@@ -164,7 +121,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
           </View>
           <Pressable
             style={[styles.button, globalStyles.green]}
-            onPress={() => handleSubmit()}>
+            onPress={() => setModalVisible(true)}>
             <FontAwesomeIcon
               style={[globalStyles.icon, {color: '#FFF'}]}
               icon={faSave}
@@ -185,7 +142,14 @@ const ModalNewDelivery = ({uid, resetData}) => {
           </View>
         </SafeAreaView>
       )}
-    </KeyboardAwareScrollView>
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <ModalDonation
+          setModalVisible={setModalVisible}
+          user={user}
+          resetData={resetData}
+        />
+      </Modal>
+    </View>
   );
 };
 

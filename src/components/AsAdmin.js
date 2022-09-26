@@ -28,7 +28,7 @@ const AsAdmin = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    // TODO: Agregar remember me, signup, forgot password and token
+    // TODO: Agregar remember me
     setIsLoading(true);
     if ([email, password].includes('')) {
       Alert.alert('Error', 'Email and password are required');

@@ -1,60 +1,55 @@
-import { StyleSheet, Text, View, Pressable, Alert } from 'react-native'
-import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import {StyleSheet, Text, View, Pressable, Alert} from 'react-native';
+import React from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faPencil, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAppContext from '../hooks/useAppContext';
 
-const RightActions = ({ setModalVisible, userEdit, userDelete, uid, role, closeSwipeable }) => {
+const RightActions = ({setModalVisible, uid, closeSwipeable}) => {
+  const {deleteVisitor} = useAppContext();
+
+  const handleDelete = async () => {
+    closeSwipeable();
+    Alert.alert('Delete this user?', 'A deleted user cannot be recovered', [
+      {text: 'Cancel'},
+      {text: 'Yes, delete', onPress: () => deleteVisitor(uid)},
+    ]);
+  };
+
+  // TODO: Verificar edición de usuario
+
   return (
-    <View
-      style={{ flexDirection: 'row' }}
-    >
+    <View style={{flexDirection: 'row'}}>
       <Pressable
         style={[styles.btn, globalStyles.orange]}
         onPress={async () => {
           const userLogged = await AsyncStorage.getItem('uid');
-          closeSwipeable()
-          if(uid !== userLogged && role === 'ADMIN_ROLE'){
-            Alert.alert('Error', 'You can edit only your user');
-            return
-          }
-          setModalVisible(true)
-          userEdit(uid, role)
-        }}
-      >
+          closeSwipeable();
+          setModalVisible(true);
+          // TODO: Verificar esta función
+          // userEdit(uid, role);
+        }}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, { color: '#FFF' }]}
+          style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faPencil}
           size={10}
         />
         <Text style={styles.txtBtn}> Edit</Text>
       </Pressable>
-      <Pressable
-        style={[styles.btn, styles.btnDelete]}
-        onPress={async () => {
-          closeSwipeable()
-          const userLogged = await AsyncStorage.getItem('uid');
-          if(uid === userLogged && role === 'ADMIN_ROLE'){
-            Alert.alert('Error', 'You cannot delete your user');
-            return
-          }
-          closeSwipeable()
-          userDelete(uid)
-        }}
-      >
+      <Pressable style={[styles.btn, styles.btnDelete]} onPress={handleDelete}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, { color: '#FFF' }]}
+          style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faTrashCan}
           size={10}
         />
         <Text style={styles.txtBtn}> Delete</Text>
       </Pressable>
     </View>
-  )
-}
+  );
+};
 
-export default RightActions
+export default RightActions;
 
 const styles = StyleSheet.create({
   btnContainer: {
@@ -71,12 +66,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   btnDelete: {
-    backgroundColor: '#EF4444'
+    backgroundColor: '#EF4444',
   },
   txtBtn: {
     textTransform: 'uppercase',
     fontWeight: '700',
     fontSize: 12,
-    color: '#FFF'
-  }
-})
+    color: '#FFF',
+  },
+});

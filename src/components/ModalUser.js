@@ -17,7 +17,7 @@ import globalStyles from '../styles/styles';
 import * as Animatable from 'react-native-animatable';
 import useAppContext from '../hooks/useAppContext';
 
-const ModalUser = ({setModalVisible, modalVisible, resetState, fromUsers}) => {
+const ModalUser = ({resetState, fromUsers}) => {
   const fromAdmin = fromUsers !== undefined;
 
   const {visitorUser} = useAppContext();
@@ -44,15 +44,6 @@ const ModalUser = ({setModalVisible, modalVisible, resetState, fromUsers}) => {
       }
     }
   }, []);
-
-  const logout = () => {
-    if (fromAdmin) {
-      fromUsers.resetState();
-    } else {
-      resetState();
-      setModalVisible(!modalVisible);
-    }
-  };
 
   return (
     <SafeAreaView style={[globalStyles.flex, globalStyles.lightGreen]}>
@@ -121,7 +112,7 @@ const ModalUser = ({setModalVisible, modalVisible, resetState, fromUsers}) => {
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
           <Pressable
             style={[globalStyles.button, globalStyles.orange, {margin: 30}]}
-            onPress={logout}>
+            onPress={() => resetState()}>
             <FontAwesomeIcon style={globalStyles.icon} icon={faSignOut} />
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
               {fromAdmin ? ' Exit' : ' Logout'}

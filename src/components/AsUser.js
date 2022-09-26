@@ -46,6 +46,7 @@ const AsUser = () => {
   const resetState = async () => {
     setDate(today);
     setCustomerId('');
+    setModalVisible(false);
   };
 
   const handleLogin = async () => {
@@ -120,11 +121,7 @@ const AsUser = () => {
         <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
       </Pressable>
       <Modal animationType="slide" visible={modalVisible}>
-        <ModalUser
-          setModalVisible={setModalVisible}
-          modalVisible={modalVisible}
-          resetState={resetState}
-        />
+        <ModalUser resetState={resetState} />
       </Modal>
     </View>
   );
