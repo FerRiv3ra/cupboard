@@ -1,166 +1,203 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Pressable} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import globalStyles from '../styles/styles';
 import DatePicker from 'react-native-date-picker';
-import {RadioGroup} from 'react-native-radio-buttons-group';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
-  faVectorSquare,
-  faEye,
-  faEyeSlash,
   faSave,
-  faCheckSquare,
+  faUser,
+  faUsers,
+  faHome,
+  faMapMarkerAlt,
+  faCity,
+  faHouseUser,
+  faPhone,
+  faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
+import SegmentedControl from './SegmentedControls';
+import moment from 'moment';
+import useAppContext from '../hooks/useAppContext';
 
-const FormUser = props => {
-  const [passVisible, setPassVisible] = useState(false);
-  const [confirmPassVisible, setConfirmPassVisible] = useState(false);
+const FormUser = ({setModalVisible}) => {
+  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00+00`);
 
-  const {
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPass,
-    setConfirmPass,
-    date,
-    today,
-    handleDate,
-    setPostcode,
-    postcode,
-    phone,
-    setPhone,
-    handleRadioChild,
-    handleCreate,
-    isAdmin,
-    radioChild,
-    uid,
-    setNoHousehold,
-    noHousehold,
-    setChildCant,
-    childCant,
-    agree,
-    setAgree,
-    houseProvider,
-    setHouseProvider,
-  } = props;
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [noHousehold, setNoHousehold] = useState('');
+  const [child, setChild] = useState(false);
+  const [childCant, setChildCant] = useState('');
+  const [date, setDate] = useState(today);
+  const [address, setAddress] = useState('');
+  const [postcode, setPostcode] = useState('');
+  const [town, setTown] = useState('');
+  const [housingProvider, setHousingProvider] = useState('');
+  const [phone, setPhone] = useState('');
+  const [pensioner, setPensioner] = useState(false);
+  const [policy, setPolicy] = useState(false);
+
+  const {createUser} = useAppContext();
+
+  const handleDate = selectedDate => {
+    let date = new Date(
+      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00+00`,
+    );
+
+    setDate(date);
+  };
+
+  const handleCreate = async () => {
+    if (
+      [
+        firstName,
+        lastName,
+        address,
+        postcode,
+        town,
+        housingProvider,
+        phone,
+      ].includes('')
+    ) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+
+    if (Number(noHousehold) < 1) {
+      Alert.alert('Error', 'Number in household no valid');
+      return;
+    }
+
+    if (child && Number(childCant) <= 0) {
+      Alert.alert('Error', 'Number of children is required');
+      return;
+    }
+
+    if (!policy) {
+      Alert.alert('Error', 'It is necessary to accept the terms');
+      return;
+    }
+
+    const user = {
+      firstName,
+      lastName,
+      noHousehold: Number(noHousehold),
+      child,
+      childCant: Number(childCant),
+      dob: moment(date).format('DD/MM/YYYY'),
+      address,
+      postcode,
+      town,
+      housingProvider,
+      phone,
+      pensioner,
+    };
+
+    const resp = await createUser(user);
+
+    if (!resp.ok) {
+      Alert.alert('Error', resp.msg);
+      return;
+    }
+
+    setFirstName('');
+    setLastName('');
+    setNoHousehold('');
+    setChildCant('');
+    setDate(today);
+    setAddress('');
+    setPostcode('');
+    setTown('');
+    setHousingProvider('');
+    setPhone('');
+    setPolicy(false);
+
+    Alert.alert('Success', `User ID ${resp.user.customerId} assigned`, [
+      {text: 'Ok', onPress: () => setModalVisible(false)},
+    ]);
+  };
 
   return (
-    <KeyboardAwareScrollView>
-      <Text style={globalStyles.label}>Name (required)</Text>
-      <TextInput
-        style={globalStyles.input}
-        placeholder="Name"
-        keyboardType="default"
-        placeholderTextColor={'#666'}
-        onChangeText={setName}
-        value={name}
-        autoCapitalize={'words'}
-      />
-      <Text style={globalStyles.label}>{`Email ${
-        isAdmin ? '(required)' : '(optional)'
-      }`}</Text>
-      <TextInput
-        style={globalStyles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        textContentType="emailAddress"
-        placeholderTextColor={'#666'}
-        onChangeText={setEmail}
-        value={email}
-        autoCapitalize={'none'}
-      />
-      {isAdmin ? (
-        <View>
-          <Text style={globalStyles.label}>Password</Text>
-          <View style={{flexDirection: 'row'}}>
-            <TextInput
-              style={[globalStyles.input, {flex: 1, marginRight: 10}]}
-              secureTextEntry={!passVisible}
-              textContentType="password"
-              placeholder="Password"
-              placeholderTextColor={'#666'}
-              onChangeText={setPassword}
-              value={password}
-              autoCapitalize={'none'}
-            />
-            <Pressable
-              style={{flexDirection: 'column', justifyContent: 'center'}}
-              onPress={() => setPassVisible(!passVisible)}>
-              <FontAwesomeIcon
-                style={[globalStyles.icon, {color: '#444'}]}
-                icon={passVisible ? faEyeSlash : faEye}
-              />
-            </Pressable>
-          </View>
-          <Text style={globalStyles.label}>Confirm Password</Text>
-          <View style={{flexDirection: 'row'}}>
-            <TextInput
-              style={[globalStyles.input, {flex: 1, marginRight: 10}]}
-              secureTextEntry={!confirmPassVisible}
-              textContentType="password"
-              placeholder="Confirm Password"
-              placeholderTextColor={'#666'}
-              onChangeText={setConfirmPass}
-              value={confirmPass}
-              autoCapitalize={'none'}
-            />
-            <Pressable
-              style={{flexDirection: 'column', justifyContent: 'center'}}
-              onPress={() => setConfirmPassVisible(!confirmPassVisible)}>
-              <FontAwesomeIcon
-                style={[globalStyles.icon, {color: '#444'}]}
-                icon={confirmPassVisible ? faEyeSlash : faEye}
-              />
-            </Pressable>
-          </View>
-        </View>
-      ) : (
-        <View>
-          <Text style={[globalStyles.label]}>Number in household</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Number in household"
-            keyboardType="number-pad"
-            placeholderTextColor={'#666'}
-            maxLength={2}
-            onChangeText={setNoHousehold}
-            value={noHousehold}
+    <View>
+      <View style={[styles.input, {marginTop: 0}]}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faUser}
+          size={14}
+        />
+        <TextInput
+          placeholder="First Name"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setFirstName}
+          value={firstName}
+          autoCapitalize={'words'}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faUser}
+          size={14}
+        />
+        <TextInput
+          placeholder="Last Name"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setLastName}
+          value={lastName}
+          autoCapitalize={'words'}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faUsers}
+          size={14}
+        />
+        <TextInput
+          placeholder="Number in household"
+          keyboardType="numeric"
+          placeholderTextColor={'#666'}
+          onChangeText={setNoHousehold}
+          value={noHousehold}
+        />
+      </View>
+
+      <View>
+        <Text style={styles.children}>Children in household</Text>
+        <SegmentedControl
+          values={[
+            {key: 'No', value: false},
+            {key: 'Yes', value: true},
+          ]}
+          onChange={setChild}
+        />
+      </View>
+      {child && (
+        <View style={[styles.input, {marginTop: 5}]}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+            icon={faUsers}
+            size={14}
           />
-          <View style={{alignItems: 'center'}}>
-            <Text style={[globalStyles.label, globalStyles.textCenter]}>
-              Children in household
-            </Text>
-            <RadioGroup
-              radioButtons={radioChild}
-              layout="row"
-              onPress={arrRbtsC => handleRadioChild(arrRbtsC)}
-            />
-          </View>
-          {radioChild[1].selected && (
-            <View>
-              <Text style={[globalStyles.label, globalStyles.textCenter]}>
-                How many children?
-              </Text>
-              <TextInput
-                style={globalStyles.input}
-                placeholder="How many children?"
-                keyboardType="number-pad"
-                placeholderTextColor={'#666'}
-                maxLength={1}
-                textAlign={'center'}
-                onChangeText={setChildCant}
-                value={childCant}
-              />
-            </View>
-          )}
+          <TextInput
+            placeholder="How many children?"
+            keyboardType="numeric"
+            placeholderTextColor={'#666'}
+            onChangeText={setChildCant}
+            value={childCant}
+          />
         </View>
       )}
-      <Text style={globalStyles.label}>Date of birth</Text>
+
       <View style={globalStyles.dateContainer}>
+        <Text style={styles.children}>Date of birth</Text>
         <DatePicker
           androidVariant="nativeAndroid"
           date={date}
@@ -168,77 +205,151 @@ const FormUser = props => {
           onDateChange={selectedDate => handleDate(selectedDate)}
         />
       </View>
-      <Text style={globalStyles.label}>Postcode (required)</Text>
-      <TextInput
-        style={globalStyles.input}
-        placeholder="Postcode"
-        keyboardType="default"
-        textContentType="postalCode"
-        placeholderTextColor={'#666'}
-        onChangeText={setPostcode}
-        value={postcode}
-      />
-      {!isAdmin && (
-        <View>
-          <Text style={globalStyles.label}>Housing provider (required)</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Housing provider"
-            keyboardType="default"
-            placeholderTextColor={'#666'}
-            onChangeText={setHouseProvider}
-            value={houseProvider}
-          />
-        </View>
-      )}
-      <Text style={globalStyles.label}>Phone (required)</Text>
-      <TextInput
-        style={globalStyles.input}
-        placeholder="Phone"
-        textContentType="telephoneNumber"
-        keyboardType="phone-pad"
-        placeholderTextColor={'#666'}
-        onChangeText={setPhone}
-        value={phone}
-      />
-      {!isAdmin && uid === '' && (
-        <Pressable
-          onPress={() => setAgree(!agree)}
-          style={{flexDirection: 'row', marginTop: 10}}>
-          <View style={{flexDirection: 'column', marginTop: 15}}>
+
+      <View style={[styles.input, {marginTop: 5}]}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faHome}
+          size={14}
+        />
+        <TextInput
+          placeholder="Address"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setAddress}
+          value={address}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faMapMarkerAlt}
+          size={14}
+        />
+        <TextInput
+          placeholder="Postcode"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setPostcode}
+          value={postcode}
+          autoCapitalize="characters"
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faCity}
+          size={14}
+        />
+        <TextInput
+          placeholder="Town"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setTown}
+          value={town}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faHouseUser}
+          size={14}
+        />
+        <TextInput
+          placeholder="Housing provider"
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setHousingProvider}
+          value={housingProvider}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faPhone}
+          size={14}
+        />
+        <TextInput
+          placeholder="Phone"
+          keyboardType="phone-pad"
+          placeholderTextColor={'#666'}
+          onChangeText={setPhone}
+          value={phone}
+        />
+      </View>
+      <View>
+        <Text style={styles.children}>Pensioner</Text>
+        <SegmentedControl
+          values={[
+            {key: 'No', value: false},
+            {key: 'Yes', value: true},
+          ]}
+          onChange={setPensioner}
+        />
+      </View>
+
+      <Pressable style={styles.policy} onPress={() => setPolicy(!policy)}>
+        <View style={!policy && styles.icon}>
+          {policy && (
             <FontAwesomeIcon
-              style={[
-                globalStyles.icon,
-                {
-                  color: agree ? '#3A6621' : '#444',
-                  marginRight: 5,
-                  marginTop: 5,
-                },
-              ]}
-              size={26}
-              icon={agree ? faCheckSquare : faVectorSquare}
+              style={globalStyles.icon}
+              size={17}
+              icon={faSquareCheck}
+              color="#336210"
             />
-          </View>
-          <Text style={[globalStyles.label, {fontSize: 15}]}>
-            I agree to The Vine Centre storing my personal data
-          </Text>
-        </Pressable>
-      )}
-      <Pressable
-        style={[globalStyles.button, globalStyles.green, {marginTop: 20}]}
-        onPress={handleCreate}>
-        {uid !== '' && (
-          <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#FFF'}]}
-            icon={faSave}
-          />
-        )}
-        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-          {uid === '' ? '+ Create' : ' Save'}
+          )}
+        </View>
+
+        <Text style={styles.policyText}>
+          I agree to The Vine Centre storing my personal data
         </Text>
       </Pressable>
-    </KeyboardAwareScrollView>
+
+      <Pressable
+        style={[globalStyles.button, globalStyles.green, {marginVertical: 20}]}
+        onPress={handleCreate}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#FFF'}]}
+          icon={faSave}
+        />
+        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Create</Text>
+      </Pressable>
+    </View>
   );
 };
 
 export default FormUser;
+
+const styles = StyleSheet.create({
+  children: {
+    textAlign: 'center',
+    marginTop: 10,
+    color: '#333',
+  },
+  policyText: {
+    marginTop: 10,
+    color: '#333',
+    marginLeft: 5,
+  },
+  input: {
+    marginTop: 20,
+    flexDirection: 'row',
+    borderBottomColor: '#333',
+    borderBottomWidth: 1,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  policy: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  icon: {
+    justifyContent: 'center',
+    borderColor: '#333',
+    borderWidth: 2,
+    width: 17,
+    height: 17,
+  },
+});

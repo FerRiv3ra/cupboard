@@ -113,19 +113,17 @@ const Customers = () => {
           );
         }}
       />
-      <ModalNewUser
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-        user={user}
-      />
+      <Modal visible={modalVisible} animationType="fade">
+        <ModalNewUser setModalVisible={setModalVisible} user={user} />
+      </Modal>
       <Modal animationType="slide" visible={modalCC}>
         <ModalNewDelivery uid={uid} resetData={resetState} />
       </Modal>
-      {modalVisibleUser && (
-        <Modal animationType="slide" visible={modalVisibleUser}>
-          <ModalUser fromUsers={true} resetState={resetState} />
-        </Modal>
-      )}
+
+      <Modal animationType="slide" visible={modalVisibleUser}>
+        <ModalUser fromUsers={true} resetState={resetState} />
+      </Modal>
+
       <Pressable style={styles.btn} onPress={handleNewUser}>
         <FontAwesomeIcon style={styles.icon} icon={faPlus} size={24} />
       </Pressable>

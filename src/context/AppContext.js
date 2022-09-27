@@ -279,6 +279,24 @@ const AppProvider = ({children}) => {
     }
   };
 
+  const createUser = async user => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const {data} = await axiosClient.post('/users', user, config);
+
+      setUsers([data, ...users]);
+
+      return {ok: true, user: data};
+    } catch (error) {
+      return {ok: false, msg: error.response.data.errors[0].msg};
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -298,6 +316,7 @@ const AppProvider = ({children}) => {
         getOneVisitor,
         verifyCanTake,
         saveVisit,
+        createUser,
       }}>
       {children}
     </AppContext.Provider>
