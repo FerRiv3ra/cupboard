@@ -6,8 +6,11 @@ import FormUser from './FormUser';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faClose} from '@fortawesome/free-solid-svg-icons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import useAppContext from '../hooks/useAppContext';
 
-const ModalNewUser = ({setModalVisible}) => {
+const ModalNewUser = ({setModalVisible, edit}) => {
+  const {selectUser} = useAppContext();
+
   return (
     <KeyboardAwareScrollView style={styles.background}>
       <SafeAreaView>
@@ -19,6 +22,7 @@ const ModalNewUser = ({setModalVisible}) => {
           <Pressable
             style={[globalStyles.orange, styles.buttonClose]}
             onPress={() => {
+              selectUser();
               setModalVisible(false);
             }}>
             <FontAwesomeIcon color="#FFF" icon={faClose} size={24} />
@@ -26,7 +30,7 @@ const ModalNewUser = ({setModalVisible}) => {
         </View>
       </SafeAreaView>
       <View style={styles.container}>
-        <FormUser setModalVisible={setModalVisible} />
+        <FormUser setModalVisible={setModalVisible} edit={edit} />
       </View>
     </KeyboardAwareScrollView>
   );

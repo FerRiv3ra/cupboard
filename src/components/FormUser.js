@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -25,8 +25,8 @@ import SegmentedControl from './SegmentedControls';
 import moment from 'moment';
 import useAppContext from '../hooks/useAppContext';
 
-const FormUser = ({setModalVisible}) => {
-  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00+00`);
+const FormUser = ({setModalVisible, edit}) => {
+  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00.000+00:00`);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -42,14 +42,37 @@ const FormUser = ({setModalVisible}) => {
   const [pensioner, setPensioner] = useState(false);
   const [policy, setPolicy] = useState(false);
 
-  const {createUser} = useAppContext();
+  const {createUser, visitorUser, editUser, selectUser} = useAppContext();
+
+  useEffect(() => {
+    if (edit) {
+      const [d, m, y] = visitorUser.dob.slice(0, 10).split('/');
+      setChild(visitorUser.child);
+      setDate(new Date(`${y}-${m}-${d}T00:00:00.000+00:00`));
+      setPensioner(visitorUser.pensioner);
+    }
+  }, []);
 
   const handleDate = selectedDate => {
     let date = new Date(
-      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00+00`,
+      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00.000+00:00`,
     );
 
     setDate(date);
+  };
+
+  const resetState = () => {
+    setFirstName('');
+    setLastName('');
+    setNoHousehold('');
+    setChildCant('');
+    setDate(today);
+    setAddress('');
+    setPostcode('');
+    setTown('');
+    setHousingProvider('');
+    setPhone('');
+    setPolicy(false);
   };
 
   const handleCreate = async () => {
@@ -105,20 +128,75 @@ const FormUser = ({setModalVisible}) => {
       return;
     }
 
-    setFirstName('');
-    setLastName('');
-    setNoHousehold('');
-    setChildCant('');
-    setDate(today);
-    setAddress('');
-    setPostcode('');
-    setTown('');
-    setHousingProvider('');
-    setPhone('');
-    setPolicy(false);
+    resetState();
 
     Alert.alert('Success', `User ID ${resp.user.customerId} assigned`, [
       {text: 'Ok', onPress: () => setModalVisible(false)},
+    ]);
+  };
+
+  const handleEdit = async () => {
+    const user = {};
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (noHousehold) user.noHousehold = noHousehold;
+
+    if (visitorUser && visitorUser.child !== child) user.child = child;
+    if (
+      visitorUser &&
+      child &&
+      child !== visitorUser.child &&
+      Number(childCant) <= 0
+    ) {
+      Alert.alert('Error', 'Number of children is required');
+      return;
+    }
+    if (childCant) user.childCant = childCant;
+    if (address) user.address = address;
+    if (postcode) user.postcode = postcode;
+    if (town) user.town = town;
+    if (housingProvider) user.housingProvider = housingProvider;
+    if (phone) user.phone = phone;
+    if (visitorUser && visitorUser.pensioner !== pensioner)
+      user.pensioner = pensioner;
+
+    if (
+      visitorUser &&
+      moment(visitorUser.dob.slice(0, 10), 'DD/MM/YYYY').isSame(
+        moment(date).format('DD/MM/YYYY'),
+      )
+    )
+      user.dob = moment(date).format('DD/MM/YYYY');
+
+    if (!Object.keys(user).length) {
+      Alert.alert('Information', 'Nothing to do!', [
+        {
+          text: 'Ok',
+          onPress: () => {
+            selectUser();
+            setModalVisible(false);
+            return;
+          },
+        },
+      ]);
+    }
+
+    const resp = await editUser(user, visitorUser.uid);
+
+    if (!resp.ok) {
+      Alert.alert('Error', resp.msg);
+      return;
+    }
+
+    Alert.alert('Success', `User with ID ${resp.user.uid} updated`, [
+      {
+        text: 'Ok',
+        onPress: () => {
+          selectUser();
+          setModalVisible(false);
+        },
+      },
     ]);
   };
 
@@ -131,7 +209,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="First Name"
+          placeholder={edit ? visitorUser.firstName : 'First Name'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setFirstName}
@@ -146,7 +224,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Last Name"
+          placeholder={edit ? visitorUser.lastName : 'Last Name'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setLastName}
@@ -161,7 +239,9 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Number in household"
+          placeholder={
+            edit ? visitorUser.noHousehold?.toString() : 'Number in household'
+          }
           keyboardType="numeric"
           placeholderTextColor={'#666'}
           onChangeText={setNoHousehold}
@@ -177,6 +257,7 @@ const FormUser = ({setModalVisible}) => {
             {key: 'Yes', value: true},
           ]}
           onChange={setChild}
+          selectedIndex={edit ? (visitorUser.child ? 1 : 0) : 0}
         />
       </View>
       {child && (
@@ -187,7 +268,11 @@ const FormUser = ({setModalVisible}) => {
             size={14}
           />
           <TextInput
-            placeholder="How many children?"
+            placeholder={
+              edit && visitorUser.child
+                ? visitorUser.childCant?.toString()
+                : 'How many children?'
+            }
             keyboardType="numeric"
             placeholderTextColor={'#666'}
             onChangeText={setChildCant}
@@ -213,7 +298,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Address"
+          placeholder={edit ? visitorUser.address : 'Address'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setAddress}
@@ -227,7 +312,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Postcode"
+          placeholder={edit ? visitorUser.postcode : 'Postcode'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setPostcode}
@@ -242,7 +327,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Town"
+          placeholder={edit ? visitorUser.town : 'Town'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setTown}
@@ -256,7 +341,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Housing provider"
+          placeholder={edit ? visitorUser.housingProvider : 'Housing provider'}
           keyboardType="default"
           placeholderTextColor={'#666'}
           onChangeText={setHousingProvider}
@@ -270,7 +355,7 @@ const FormUser = ({setModalVisible}) => {
           size={14}
         />
         <TextInput
-          placeholder="Phone"
+          placeholder={edit ? visitorUser.phone : 'Phone'}
           keyboardType="phone-pad"
           placeholderTextColor={'#666'}
           onChangeText={setPhone}
@@ -285,34 +370,40 @@ const FormUser = ({setModalVisible}) => {
             {key: 'Yes', value: true},
           ]}
           onChange={setPensioner}
+          selectedIndex={edit ? (visitorUser.pensioner ? 1 : 0) : 0}
         />
       </View>
 
-      <Pressable style={styles.policy} onPress={() => setPolicy(!policy)}>
-        <View style={!policy && styles.icon}>
-          {policy && (
-            <FontAwesomeIcon
-              style={globalStyles.icon}
-              size={17}
-              icon={faSquareCheck}
-              color="#336210"
-            />
-          )}
-        </View>
+      {!edit && (
+        <Pressable style={styles.policy} onPress={() => setPolicy(!policy)}>
+          <View style={!policy && styles.icon}>
+            {policy && (
+              <FontAwesomeIcon
+                style={globalStyles.icon}
+                size={17}
+                icon={faSquareCheck}
+                color="#336210"
+              />
+            )}
+          </View>
 
-        <Text style={styles.policyText}>
-          I agree to The Vine Centre storing my personal data
-        </Text>
-      </Pressable>
+          <Text style={styles.policyText}>
+            I agree to The Vine Centre storing my personal data
+          </Text>
+        </Pressable>
+      )}
 
       <Pressable
         style={[globalStyles.button, globalStyles.green, {marginVertical: 20}]}
-        onPress={handleCreate}>
+        onPress={edit ? handleEdit : handleCreate}>
         <FontAwesomeIcon
           style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faSave}
         />
-        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Create</Text>
+        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+          {' '}
+          {edit ? 'SAVE' : 'CREATE'}
+        </Text>
       </Pressable>
     </View>
   );

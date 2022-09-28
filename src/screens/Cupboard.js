@@ -1,5 +1,5 @@
 import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import globalStyles from '../styles/styles';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -11,9 +11,20 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAppContext from '../hooks/useAppContext';
 
 const Cupboard = () => {
+  const {getAllVisitors, setIsLoading} = useAppContext();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    async function fetchMyAPI() {
+      await getAllVisitors();
+      setIsLoading(false);
+    }
+
+    fetchMyAPI();
+  }, []);
 
   const handleLogout = async () => {
     try {

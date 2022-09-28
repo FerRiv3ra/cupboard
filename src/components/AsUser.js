@@ -12,7 +12,7 @@ import useAppContext from '../hooks/useAppContext';
 import moment from 'moment';
 
 const AsUser = () => {
-  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00+00`);
+  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00.000+00:00`);
 
   const [date, setDate] = useState(today);
   const [customerId, setCustomerId] = useState('');
@@ -26,7 +26,7 @@ const AsUser = () => {
       const user = JSON.parse(await AsyncStorage.getItem('user'));
       if (user) {
         const [d, m, y] = user.dob.slice(0, 10).split('/');
-        const dob = new Date(`${y}-${m}-${d}T00:00:00+00`);
+        const dob = new Date(`${y}-${m}-${d}T00:00:00.000+00:00`);
         setCustomerId(user.customerId.toString());
         setDate(dob);
       }
@@ -37,7 +37,7 @@ const AsUser = () => {
 
   const handleDate = selectedDate => {
     let date = new Date(
-      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00+00`,
+      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00.000+00:00`,
     );
 
     setDate(date);

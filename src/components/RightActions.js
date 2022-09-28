@@ -1,13 +1,16 @@
-import {StyleSheet, Text, View, Pressable, Alert} from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View, Pressable, Alert, Modal} from 'react-native';
+import React, {useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPencil, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAppContext from '../hooks/useAppContext';
+import ModalNewUser from './ModalNewUser';
 
-const RightActions = ({setModalVisible, uid, closeSwipeable}) => {
-  const {deleteVisitor} = useAppContext();
+const RightActions = ({uid, closeSwipeable}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const {deleteVisitor, selectUser} = useAppContext();
 
   const handleDelete = async () => {
     closeSwipeable();
@@ -17,19 +20,15 @@ const RightActions = ({setModalVisible, uid, closeSwipeable}) => {
     ]);
   };
 
-  // TODO: Verificar edición de usuario
+  const handleEdit = () => {
+    closeSwipeable();
+    selectUser(uid);
+    setModalVisible(true);
+  };
 
   return (
     <View style={{flexDirection: 'row'}}>
-      <Pressable
-        style={[styles.btn, globalStyles.orange]}
-        onPress={async () => {
-          const userLogged = await AsyncStorage.getItem('uid');
-          closeSwipeable();
-          setModalVisible(true);
-          // TODO: Verificar esta función
-          // userEdit(uid, role);
-        }}>
+      <Pressable style={[styles.btn, globalStyles.orange]} onPress={handleEdit}>
         <FontAwesomeIcon
           style={[globalStyles.icon, {color: '#FFF'}]}
           icon={faPencil}
@@ -45,6 +44,9 @@ const RightActions = ({setModalVisible, uid, closeSwipeable}) => {
         />
         <Text style={styles.txtBtn}> Delete</Text>
       </Pressable>
+      <Modal visible={modalVisible} animationType="fade">
+        <ModalNewUser setModalVisible={setModalVisible} edit={true} />
+      </Modal>
     </View>
   );
 };

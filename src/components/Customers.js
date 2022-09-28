@@ -9,7 +9,7 @@ import {
   TextInput,
   Keyboard,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import globalStyles from '../styles/styles';
 import User from './User';
 import ModalNewUser from './ModalNewUser';
@@ -20,32 +20,20 @@ import ModalNewDelivery from './ModalNewDelivery';
 import useAppContext from '../hooks/useAppContext';
 
 const Customers = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [dataFilter, setDataFilter] = useState([]);
-  const [user, setUser] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleUser, setModalVisibleUser] = useState(false);
   const [modalCC, setModalCC] = useState(false);
   const [search, setSearch] = useState('');
   const [uid, setUid] = useState('');
 
-  const {getAllVisitors, users} = useAppContext();
-
-  useEffect(() => {
-    async function fetchMyAPI() {
-      await getAllVisitors();
-      setIsLoading(false);
-    }
-
-    fetchMyAPI();
-  }, []);
+  const {users, isLoading} = useAppContext();
 
   const handleNewUser = () => {
     setModalVisible(!modalVisible);
   };
 
   const resetState = () => {
-    setUser({});
     setModalVisibleUser(false);
     setModalCC(false);
     setUid('');
@@ -114,7 +102,7 @@ const Customers = () => {
         }}
       />
       <Modal visible={modalVisible} animationType="fade">
-        <ModalNewUser setModalVisible={setModalVisible} user={user} />
+        <ModalNewUser setModalVisible={setModalVisible} />
       </Modal>
       <Modal animationType="slide" visible={modalCC}>
         <ModalNewDelivery uid={uid} resetData={resetState} />

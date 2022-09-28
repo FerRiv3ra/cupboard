@@ -9,9 +9,14 @@ const AppProvider = ({children}) => {
   const [users, setUsers] = useState([]);
   const [visitorUser, setVisitorUser] = useState({});
   const [adminUser, setAdminUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const selectUser = uid => {
-    setVisitorUser(users.filter(user => user.uid === uid)[0]);
+    if (!uid) {
+      setVisitorUser({});
+    } else {
+      setVisitorUser(users.filter(user => user.uid === uid)[0]);
+    }
   };
 
   const userLogin = async (customerId, date) => {
@@ -176,8 +181,10 @@ const AppProvider = ({children}) => {
       const {data} = await axiosClient('/users', config);
 
       setUsers(data.users);
+      setIsLoading(false);
       return {ok: true, user: data};
     } catch (error) {
+      setIsLoading(false);
       return {ok: false, msg: error.response.data.msg};
     }
   };
@@ -238,6 +245,34 @@ const AppProvider = ({children}) => {
       return data;
     } catch (error) {
       return error.response.data;
+    }
+  };
+
+  const editUser = async (body, id) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const {data} = await axiosClient.put(`/users/${id}`, body, config);
+
+      setUsers(
+        users.map(user => {
+          if (user.uid === id) {
+            return data;
+          }
+          return user;
+        }),
+      );
+
+      return {ok: true, user: data};
+    } catch (error) {
+      return {
+        ok: false,
+        msg: error.response.data.msg || error.response.data.errors[0].msg,
+      };
     }
   };
 
@@ -317,6 +352,9 @@ const AppProvider = ({children}) => {
         verifyCanTake,
         saveVisit,
         createUser,
+        isLoading,
+        setIsLoading,
+        editUser,
       }}>
       {children}
     </AppContext.Provider>

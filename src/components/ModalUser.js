@@ -20,7 +20,7 @@ import useAppContext from '../hooks/useAppContext';
 const ModalUser = ({resetState, fromUsers}) => {
   const fromAdmin = fromUsers !== undefined;
 
-  const {visitorUser} = useAppContext();
+  const {visitorUser, selectUser} = useAppContext();
   const logoFromFile = require('../assets/logovc.png');
 
   useEffect(() => {
@@ -44,6 +44,11 @@ const ModalUser = ({resetState, fromUsers}) => {
       }
     }
   }, []);
+
+  const handleClose = () => {
+    selectUser();
+    resetState();
+  };
 
   return (
     <SafeAreaView style={[globalStyles.flex, globalStyles.lightGreen]}>
@@ -112,7 +117,7 @@ const ModalUser = ({resetState, fromUsers}) => {
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
           <Pressable
             style={[globalStyles.button, globalStyles.orange, {margin: 30}]}
-            onPress={() => resetState()}>
+            onPress={handleClose}>
             <FontAwesomeIcon style={globalStyles.icon} icon={faSignOut} />
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
               {fromAdmin ? ' Exit' : ' Logout'}
