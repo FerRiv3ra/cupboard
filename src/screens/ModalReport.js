@@ -3,13 +3,13 @@ import {
   Text,
   Pressable,
   SafeAreaView,
-  FlatList,
   StyleSheet,
   Alert,
-  Modal,
   ActivityIndicator,
+  useWindowDimensions,
+  ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   faEnvelopeOpenText,
@@ -21,25 +21,32 @@ import globalStyles from '../styles/styles';
 import DetailReport from '../components/DetailReport';
 
 import * as Animatable from 'react-native-animatable';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAppContext from '../hooks/useAppContext';
+import moment from 'moment';
 
-const ModalReport = ({
-  data = [],
-  users = [],
-  resetData,
-  startDate,
-  finalDate,
-}) => {
+const ModalReport = ({resetData, startDate, finalDate}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSentEmail, setIsSentEmail] = useState(false);
+  const [visits, setVisits] = useState(0);
+  const [people, setPeople] = useState(0);
+  const [totalHousehold, setTotalHousehold] = useState(0);
+  const [users, setUsers] = useState([]);
 
-  const visits = data.length;
+  const {report, sendEmail} = useAppContext();
+  const {height} = useWindowDimensions();
 
-  const people = users.length;
+  useEffect(() => {
+    const {usersArr, visits: dataVisits} = report;
+    setVisits(dataVisits.length);
+    setPeople(usersArr.length);
+    setUsers(usersArr);
 
-  const totalHousehold = users.reduce((tot, item) => {
-    return tot + item.no_household;
-  }, 0);
+    setTotalHousehold(
+      usersArr.reduce((tot, item) => {
+        return tot + item.noHousehold;
+      }, 0),
+    );
+  }, []);
 
   const handleEmail = async () => {
     if (isSentEmail) {
@@ -48,56 +55,30 @@ const ModalReport = ({
     }
 
     setIsLoading(true);
-    const [ys, ms, ds] = startDate.toISOString().slice(0, 10).split('-');
-    const [yf, mf, df] = finalDate.toISOString().slice(0, 10).split('-');
 
     const dates = {
-      startDate: `${ds}/${ms}/${ys}`,
-      finalDate: `${df}/${mf}/${yf}`,
+      startDate: moment(startDate).format('DD/MM/YYYY'),
+      finalDate: moment(finalDate).format('DD/MM/YYYY'),
     };
 
-    const token = await AsyncStorage.getItem('token');
+    const resp = await sendEmail(dates);
 
-    try {
-      const response = await fetch(
-        'https://grubhubbackend.herokuapp.com/api/deliveries/email',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-token': token,
-          },
-          body: JSON.stringify(dates),
-        },
-      );
-      const isSent = await response.json();
-
-      if (isSent.error !== undefined) {
-        Alert.alert('Error', isSent.error);
-        setIsLoading(false);
-      } else {
-        Alert.alert('Information', isSent.msg);
-        setIsLoading(false);
-        setIsSentEmail(true);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Network request failed');
+    if (!resp.ok) {
+      Alert.alert('Error', isSent.error);
       setIsLoading(false);
+      return;
     }
+
+    Alert.alert('Information', resp.msg);
+    setIsLoading(false);
+    setIsSentEmail(true);
   };
 
   return (
-    <SafeAreaView style={[globalStyles.lightGreen, globalStyles.flex]}>
-      <View style={globalStyles.view}>
-        <Animatable.View animation={'bounceInDown'} duration={2000} delay={500}>
-          <Pressable
-            style={[globalStyles.button, globalStyles.green]}
-            onPress={() => resetData()}>
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>X Close</Text>
-          </Pressable>
-        </Animatable.View>
+    <SafeAreaView style={styles.background}>
+      <View style={styles.view}>
         <Animatable.View
-          style={[styles.card, globalStyles.shadow]}
+          style={styles.card}
           animation={'bounceInDown'}
           duration={2000}
           delay={1000}>
@@ -106,7 +87,7 @@ const ModalReport = ({
               styles.mailContainer,
               isSentEmail ? globalStyles.gray : globalStyles.orange,
             ]}
-            onPress={() => handleEmail()}>
+            onPress={handleEmail}>
             {isLoading ? (
               <ActivityIndicator animating={isLoading} />
             ) : (
@@ -145,16 +126,24 @@ const ModalReport = ({
           {visits === 0 ? 'Nothing to show' : 'Details'}
         </Animatable.Text>
         <Animatable.View
+          style={[styles.reportContainer, {height: height - 360}]}
           animation={'bounceInDown'}
           duration={2000}
           delay={2000}>
-          <FlatList
-            data={users}
-            keyExtractor={item => item.uid}
-            renderItem={({item}) => {
-              return <DetailReport item={item} />;
-            }}
-          />
+          <ScrollView horizontal>
+            <ScrollView>
+              {users.map((user, index) => (
+                <DetailReport user={user} key={user.uid} index={index} />
+              ))}
+            </ScrollView>
+          </ScrollView>
+        </Animatable.View>
+        <Animatable.View animation={'bounceInDown'} duration={2000} delay={500}>
+          <Pressable
+            style={[globalStyles.button, globalStyles.green, {marginTop: 20}]}
+            onPress={() => resetData()}>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>X Close</Text>
+          </Pressable>
         </Animatable.View>
       </View>
     </SafeAreaView>
@@ -162,6 +151,10 @@ const ModalReport = ({
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: '#EEE',
+  },
   label: {
     color: '#444',
     fontSize: 16,
@@ -177,6 +170,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     backgroundColor: '#FFF',
+    height: 150,
   },
   mailContainer: {
     padding: 10,
@@ -184,6 +178,13 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 10,
     borderRadius: 100,
+  },
+  reportContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+  },
+  view: {
+    marginHorizontal: 10,
   },
 });
 

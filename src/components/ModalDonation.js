@@ -20,8 +20,6 @@ const ModalDonation = ({setModalVisible, user, resetData}) => {
   const {saveVisit} = useAppContext();
   const navigation = useNavigation();
 
-  console.log(user);
-
   const handleSave = async () => {
     Keyboard.dismiss();
     const data = {

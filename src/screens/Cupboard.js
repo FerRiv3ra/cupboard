@@ -1,5 +1,5 @@
-import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
-import React, {useEffect} from 'react';
+import {View, Text, Image, Pressable, StyleSheet, Modal} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import globalStyles from '../styles/styles';
 import {StackActions, useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -8,12 +8,16 @@ import {
   faQrcode,
   faSignOut,
   faUser,
+  faUserCog,
 } from '@fortawesome/free-solid-svg-icons';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAppContext from '../hooks/useAppContext';
+import ModalAdminConfig from '../components/ModalAdminConfig';
 
 const Cupboard = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   const {getAllVisitors, setIsLoading} = useAppContext();
   const navigation = useNavigation();
 
@@ -43,6 +47,18 @@ const Cupboard = () => {
         globalStyles.flex,
         {justifyContent: 'space-around'},
       ]}>
+      <Animatable.View animation={'bounceInDown'} delay={2000}>
+        <Pressable
+          style={styles.userConfig}
+          onPress={() => setModalVisible(true)}>
+          <FontAwesomeIcon
+            style={styles.icon}
+            color="#333"
+            size={30}
+            icon={faUserCog}
+          />
+        </Pressable>
+      </Animatable.View>
       <View style={[globalStyles.view]}>
         <Animatable.View animation={'bounceInDown'} delay={500}>
           <Image
@@ -103,6 +119,9 @@ const Cupboard = () => {
           </Pressable>
         </Animatable.View>
       </View>
+      <Modal visible={modalVisible} animationType="fade">
+        <ModalAdminConfig setModalVisible={setModalVisible} />
+      </Modal>
     </View>
   );
 };
@@ -116,6 +135,11 @@ const styles = StyleSheet.create({
       marginVertical: 10,
     },
   ],
+  userConfig: {
+    position: 'absolute',
+    top: 30,
+    right: 30,
+  },
   btnLogout: [globalStyles.button, globalStyles.ccDark, globalStyles.view],
 });
 

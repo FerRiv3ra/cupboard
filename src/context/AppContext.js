@@ -10,6 +10,7 @@ const AppProvider = ({children}) => {
   const [visitorUser, setVisitorUser] = useState({});
   const [adminUser, setAdminUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [report, setReport] = useState({});
 
   const selectUser = uid => {
     if (!uid) {
@@ -58,6 +59,27 @@ const AppProvider = ({children}) => {
       const {data} = await axiosClient.post('/admins', user, config);
 
       return data;
+    } catch (error) {
+      return {
+        ok: false,
+        msg: error.response.data.msg || error.response.data.errors[0].msg,
+      };
+    }
+  };
+
+  const updateAdmin = async user => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-token': token,
+      },
+    };
+
+    try {
+      const {data} = await axiosClient.put('/admins', user, config);
+
+      setAdminUser(data);
+      return {ok: true};
     } catch (error) {
       return {
         ok: false,
@@ -332,29 +354,79 @@ const AppProvider = ({children}) => {
     }
   };
 
+  const getAllVisits = async (start, final) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const {data} = await axiosClient(
+        `/visits?startDate=${start}&finalDate=${final}`,
+        config,
+      );
+
+      setReport(data);
+
+      return {ok: true, data};
+    } catch (error) {
+      return {
+        ok: false,
+        msg: error.response.data.errors[0].msg || error.response.data.msg,
+      };
+    }
+  };
+
+  const sendEmail = async dates => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': token,
+        },
+      };
+
+      const {data} = await axiosClient.post('/visits/email', dates, config);
+
+      return {ok: true, msg: data.msg};
+    } catch (error) {
+      return {
+        ok: false,
+        msg: error.response.data.errors[0].msg || error.response.data.msg,
+      };
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
-        users,
-        userLogin,
-        visitorUser,
         adminLogin,
-        verifyTokenLogin,
+        adminUser,
         createAdminUser,
-        verifyTokenForgot,
-        forgotPasswordRequest,
-        updatePassword,
-        deleteVisitor,
-        getAllVisitors,
-        unblockUser,
-        selectUser,
-        getOneVisitor,
-        verifyCanTake,
-        saveVisit,
         createUser,
-        isLoading,
-        setIsLoading,
+        deleteVisitor,
         editUser,
+        forgotPasswordRequest,
+        getAllVisitors,
+        getAllVisits,
+        getOneVisitor,
+        isLoading,
+        report,
+        saveVisit,
+        selectUser,
+        sendEmail,
+        setIsLoading,
+        unblockUser,
+        updateAdmin,
+        updatePassword,
+        userLogin,
+        users,
+        verifyCanTake,
+        verifyTokenForgot,
+        verifyTokenLogin,
+        visitorUser,
       }}>
       {children}
     </AppContext.Provider>

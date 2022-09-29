@@ -26,7 +26,7 @@ import moment from 'moment';
 import useAppContext from '../hooks/useAppContext';
 
 const FormUser = ({setModalVisible, edit}) => {
-  let today = new Date(`${moment().format('YYYY-MM-DD')}T00:00:00.000+00:00`);
+  let today = new Date();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -48,18 +48,14 @@ const FormUser = ({setModalVisible, edit}) => {
     if (edit) {
       const [d, m, y] = visitorUser.dob.slice(0, 10).split('/');
       setChild(visitorUser.child);
-      setDate(new Date(`${y}-${m}-${d}T00:00:00.000+00:00`));
+      setDate(
+        new Date(
+          moment.utc(moment(`${y}/${m}/${d}`).format('YYYY/MM/DD')).format(),
+        ),
+      );
       setPensioner(visitorUser.pensioner);
     }
   }, []);
-
-  const handleDate = selectedDate => {
-    let date = new Date(
-      `${moment(selectedDate).format('YYYY-MM-DD')}T00:00:00.000+00:00`,
-    );
-
-    setDate(date);
-  };
 
   const resetState = () => {
     setFirstName('');
@@ -163,11 +159,13 @@ const FormUser = ({setModalVisible, edit}) => {
 
     if (
       visitorUser &&
-      moment(visitorUser.dob.slice(0, 10), 'DD/MM/YYYY').isSame(
-        moment(date).format('DD/MM/YYYY'),
-      )
+      !moment(
+        moment.utc(
+          moment(visitorUser.dob.slice(0, 10), 'DD/MM/YYYY').utc(true),
+        ),
+      ).isSame(moment(date))
     )
-      user.dob = moment(date).format('DD/MM/YYYY');
+      user.dob = `${moment(date).format('DD/MM/YYYY')}T00:00:00.000Z`;
 
     if (!Object.keys(user).length) {
       Alert.alert('Information', 'Nothing to do!', [
@@ -176,10 +174,10 @@ const FormUser = ({setModalVisible, edit}) => {
           onPress: () => {
             selectUser();
             setModalVisible(false);
-            return;
           },
         },
       ]);
+      return;
     }
 
     const resp = await editUser(user, visitorUser.uid);
@@ -189,7 +187,7 @@ const FormUser = ({setModalVisible, edit}) => {
       return;
     }
 
-    Alert.alert('Success', `User with ID ${resp.user.uid} updated`, [
+    Alert.alert('Success', `User with ID ${resp.user.customerId} updated`, [
       {
         text: 'Ok',
         onPress: () => {
@@ -287,7 +285,7 @@ const FormUser = ({setModalVisible, edit}) => {
           androidVariant="nativeAndroid"
           date={date}
           mode="date"
-          onDateChange={selectedDate => handleDate(selectedDate)}
+          onDateChange={setDate}
         />
       </View>
 

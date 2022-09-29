@@ -1,126 +1,104 @@
-import { View, Text, Pressable, Modal } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import {View, Text, Pressable, Modal, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
 import globalStyles from '../styles/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faFileInvoice} from '@fortawesome/free-solid-svg-icons';
 
 import * as Animatable from 'react-native-animatable';
 import ModalReport from './ModalReport';
+import moment from 'moment';
+import useAppContext from '../hooks/useAppContext';
 
 const NewReport = () => {
-  const today = new Date();
-  const initialDate = new Date('2022-02-01');
+  const today = new Date(moment.utc(moment()).format());
+  const initialDate = new Date(moment.utc('2022-09-01').format());
 
   const [startDate, setStartDate] = useState(today);
   const [finalDate, setFinalDate] = useState(initialDate);
 
-  const [data, setData] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [modal, setModal] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const {getAllVisits} = useAppContext();
 
   useEffect(() => {
     setTimeout(() => {
       setStartDate(initialDate);
       setFinalDate(today);
     }, 1000);
-  }, [])
-
-  const handleStartDate = (selectedDate) => {
-    let date = selectedDate;
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
-
-    setStartDate(date);
-  }
-
-  const handleFinalDate = (selectedDate) => {
-    let date = selectedDate;
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
-
-    setFinalDate(date);
-  }
+  }, []);
 
   const handleNewReport = async () => {
-    const [ys, ms, ds] = startDate.toISOString().slice(0, 10).split('-');
-    const start = `${ds}/${ms}/${ys}`;
-
-    const [yf, mf, df] = finalDate.toISOString().slice(0, 10).split('-');
-    const final = `${df}/${mf}/${yf}`;
-
     try {
-      const reqData = await fetch(`https://grubhubbackend.herokuapp.com/api/deliveries?startDate=${start}&finalDate=${final}`);
-      const deliveries = await reqData.json()
+      const resp = await getAllVisits(
+        moment(startDate).format('DD/MM/YYYY'),
+        moment(finalDate).format('DD/MM/YYYY'),
+      );
 
-      setData(deliveries.deliveries);
-      setUsers(deliveries.usersArr);
+      if (!resp.ok) {
+        Alert.alert('Error', resp.msg);
+        return;
+      }
+
+      setModalVisible(true);
     } catch (error) {
       Alert.alert('Error', 'Network request failed');
     }
-
-    setModal(true);
-  }
+  };
 
   const resetData = () => {
     setStartDate(initialDate);
     setFinalDate(today);
-    setData([]);
-    setUsers([]);
-    setModal(false);
-  }
+    setModalVisible(false);
+  };
 
   return (
-    <View style={[globalStyles.flex, { backgroundColor: '#EEE' }]}>
+    <View style={[globalStyles.flex, {backgroundColor: '#EEE'}]}>
       <View style={[globalStyles.view]}>
         <Text style={[globalStyles.label]}>Start date</Text>
         <View style={globalStyles.dateContainer}>
           <DatePicker
-            androidVariant='nativeAndroid'
+            androidVariant="nativeAndroid"
             date={startDate}
             maximumDate={today}
-            mode='date'
-            onDateChange={(selectedDate) => handleStartDate(selectedDate)}
+            mode="date"
+            onDateChange={setStartDate}
           />
         </View>
         <Text style={[globalStyles.label]}>End date</Text>
         <View style={globalStyles.dateContainer}>
           <DatePicker
-            androidVariant='nativeAndroid'
+            androidVariant="nativeAndroid"
             date={finalDate}
             maximumDate={today}
-            mode='date'
-            onDateChange={(selectedDate) => handleFinalDate(selectedDate)}
+            mode="date"
+            onDateChange={setFinalDate}
           />
         </View>
-        <Animatable.View
-          animation={'bounceIn'}
-          duration={2000}
-          delay={1000}
-        >
+        <Animatable.View animation={'bounceIn'} duration={2000} delay={1000}>
           <Pressable
-            style={[globalStyles.button, globalStyles.green]}
-            onPress={() => handleNewReport()}
-          >
+            style={[globalStyles.button, globalStyles.green, {marginTop: 20}]}
+            onPress={() => handleNewReport()}>
             <FontAwesomeIcon
-              style={[globalStyles.icon, { color: '#FFF' }]}
+              style={[globalStyles.icon, {color: '#FFF'}]}
               icon={faFileInvoice}
             />
-            <Text style={[globalStyles.textBtn, { color: '#FFF' }]}> New Report</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+              {' '}
+              New Report
+            </Text>
           </Pressable>
         </Animatable.View>
       </View>
-      <Modal
-        visible={modal}
-      >
+      <Modal visible={modalVisible}>
         <ModalReport
           resetData={resetData}
-          data={data}
-          users={users}
           startDate={startDate}
           finalDate={finalDate}
         />
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 export default NewReport;
