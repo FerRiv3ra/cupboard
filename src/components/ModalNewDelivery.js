@@ -142,7 +142,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
           </View>
         </SafeAreaView>
       )}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <ModalDonation
           setModalVisible={setModalVisible}
           user={user}

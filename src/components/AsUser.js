@@ -101,6 +101,7 @@ const AsUser = () => {
               androidVariant="nativeAndroid"
               date={date}
               mode="date"
+              theme="light"
               onDateChange={selectedDate => handleDate(selectedDate)}
             />
           </View>

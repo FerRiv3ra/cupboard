@@ -62,6 +62,7 @@ const NewReport = () => {
             date={startDate}
             maximumDate={today}
             mode="date"
+            theme="light"
             onDateChange={setStartDate}
           />
         </View>
@@ -72,6 +73,7 @@ const NewReport = () => {
             date={finalDate}
             maximumDate={today}
             mode="date"
+            theme="light"
             onDateChange={setFinalDate}
           />
         </View>

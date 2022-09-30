@@ -285,6 +285,7 @@ const FormUser = ({setModalVisible, edit}) => {
           androidVariant="nativeAndroid"
           date={date}
           mode="date"
+          theme="light"
           onDateChange={setDate}
         />
       </View>
