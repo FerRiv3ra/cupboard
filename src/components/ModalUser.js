@@ -51,7 +51,7 @@ const ModalUser = ({resetState, fromUsers}) => {
   };
 
   return (
-    <SafeAreaView style={[globalStyles.flex, globalStyles.lightGreen]}>
+    <SafeAreaView style={styles.background}>
       <ScrollView>
         <Animatable.View
           style={styles.qrCode}
@@ -70,7 +70,7 @@ const ModalUser = ({resetState, fromUsers}) => {
           )}
         </Animatable.View>
         <Animatable.View
-          style={[globalStyles.shadow, styles.info]}
+          style={[styles.info]}
           animation={'bounceIn'}
           duration={2000}
           delay={300}>
@@ -116,7 +116,7 @@ const ModalUser = ({resetState, fromUsers}) => {
         </Animatable.View>
         <Animatable.View animation={'bounceInUp'} duration={3000} delay={700}>
           <Pressable
-            style={[globalStyles.button, globalStyles.orange, {margin: 30}]}
+            style={[globalStyles.button, globalStyles.green, {margin: 30}]}
             onPress={handleClose}>
             <FontAwesomeIcon style={globalStyles.icon} icon={faSignOut} />
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
@@ -158,6 +158,10 @@ const ModalUser = ({resetState, fromUsers}) => {
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: '#EEE',
+  },
   qrCode: {
     marginVertical: 30,
     alignItems: 'center',

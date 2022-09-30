@@ -119,7 +119,7 @@ const Cupboard = () => {
           </Pressable>
         </Animatable.View>
       </View>
-      <Modal visible={modalVisible} animationType="fade">
+      <Modal visible={modalVisible} animationType="slide">
         <ModalAdminConfig setModalVisible={setModalVisible} />
       </Modal>
     </View>

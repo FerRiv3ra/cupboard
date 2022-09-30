@@ -17,10 +17,13 @@ import {
   faEyeSlash,
   faLock,
   faSave,
+  faTrash,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import useAppContext from '../hooks/useAppContext';
 import ShowAlert from './ShowAlert';
+import {StackActions, useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalAdminConfig = ({setModalVisible}) => {
   const regexStrong = new RegExp(
@@ -54,7 +57,8 @@ const ModalAdminConfig = ({setModalVisible}) => {
     setIsPassOk(regexStrong.test(pass));
   };
 
-  const {adminUser, updateAdmin} = useAppContext();
+  const {adminUser, updateAdmin, deleteAdmin} = useAppContext();
+  const navigation = useNavigation();
 
   const handleSave = async () => {
     Keyboard.dismiss();
@@ -89,7 +93,7 @@ const ModalAdminConfig = ({setModalVisible}) => {
       return;
     }
 
-    const resp = await updateAdmin(user);
+    const resp = await updateAdmin(user, adminUser.uid);
 
     if (!resp.ok) {
       Alert.alert('Error', resp.msg, [
@@ -98,6 +102,10 @@ const ModalAdminConfig = ({setModalVisible}) => {
       return;
     }
 
+    setName('');
+    setEmail('');
+    setPassword('');
+
     Alert.alert('Success', 'Admin user updated', [
       {
         text: 'OK',
@@ -105,6 +113,32 @@ const ModalAdminConfig = ({setModalVisible}) => {
           setModalVisible(false);
         },
       },
+    ]);
+  };
+
+  const deleteAdminUser = async () => {
+    const resp = await deleteAdmin(adminUser.uid);
+
+    if (!resp.ok) {
+      Alert.alert('Error', resp.msg);
+      return;
+    }
+
+    Alert.alert('Success', 'Your account has been deleted', [
+      {
+        text: 'Ok',
+        onPress: async () => {
+          await AsyncStorage.removeItem('token');
+          navigation.dispatch(StackActions.popToTop());
+        },
+      },
+    ]);
+  };
+
+  const handleDelete = () => {
+    Alert.alert('Warning', 'Are you sure you want to delete your account?', [
+      {text: 'Cancel'},
+      {text: 'Yes, delete', onPress: () => deleteAdminUser()},
     ]);
   };
 
@@ -189,9 +223,22 @@ const ModalAdminConfig = ({setModalVisible}) => {
         )}
         <Pressable
           onPress={handleSave}
-          style={[globalStyles.button, globalStyles.orange, styles.button]}>
+          style={[globalStyles.button, globalStyles.green, styles.button]}>
           <FontAwesomeIcon style={globalStyles.icon} icon={faSave} />
           <Text style={[globalStyles.textBtn, styles.textButton]}> Save</Text>
+        </Pressable>
+        <Pressable
+          onPress={handleDelete}
+          style={[
+            globalStyles.button,
+            globalStyles.orange,
+            styles.buttonDelete,
+          ]}>
+          <FontAwesomeIcon style={globalStyles.icon} icon={faTrash} />
+          <Text style={[globalStyles.textBtn, styles.textButton]}>
+            {' '}
+            Delete my account
+          </Text>
         </Pressable>
       </Pressable>
       <Pressable
@@ -236,7 +283,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    elevation: 2,
+  },
+  buttonDelete: {
+    marginTop: 10,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   buttonClose: {
     flexDirection: 'row',

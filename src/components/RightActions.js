@@ -44,7 +44,7 @@ const RightActions = ({uid, closeSwipeable}) => {
         />
         <Text style={styles.txtBtn}> Delete</Text>
       </Pressable>
-      <Modal visible={modalVisible} animationType="fade">
+      <Modal visible={modalVisible} animationType="slide">
         <ModalNewUser setModalVisible={setModalVisible} edit={true} />
       </Modal>
     </View>

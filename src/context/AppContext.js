@@ -67,7 +67,9 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const updateAdmin = async user => {
+  const updateAdmin = async (user, uid) => {
+    const token = await AsyncStorage.getItem('token');
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -76,9 +78,32 @@ const AppProvider = ({children}) => {
     };
 
     try {
-      const {data} = await axiosClient.put('/admins', user, config);
+      const {data} = await axiosClient.put(`/admins/${uid}`, user, config);
 
-      setAdminUser(data);
+      setAdminUser(data.user);
+      return {ok: true};
+    } catch (error) {
+      return {
+        ok: false,
+        msg: error.response.data.msg || error.response.data.errors[0].msg,
+      };
+    }
+  };
+
+  const deleteAdmin = async uid => {
+    const token = await AsyncStorage.getItem('token');
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-token': token,
+      },
+    };
+
+    try {
+      await axiosClient.delete(`/admins/${uid}`, config);
+
+      setAdminUser({});
       return {ok: true};
     } catch (error) {
       return {
@@ -406,6 +431,7 @@ const AppProvider = ({children}) => {
         adminUser,
         createAdminUser,
         createUser,
+        deleteAdmin,
         deleteVisitor,
         editUser,
         forgotPasswordRequest,

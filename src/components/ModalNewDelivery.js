@@ -80,7 +80,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
   }
 
   return (
-    <View style={[globalStyles.lightGreen, globalStyles.flex]}>
+    <View style={styles.background}>
       {isLoading ? (
         <ActivityIndicator animating={isLoading} size="large" />
       ) : (
@@ -92,7 +92,7 @@ const ModalNewDelivery = ({uid, resetData}) => {
               X Cancel
             </Text>
           </Pressable>
-          <View style={[styles.info, globalStyles.shadow]}>
+          <View style={[styles.info]}>
             <Text style={styles.title}>
               <Text style={styles.label}>
                 {user.firstName} {user.lastName}
@@ -154,6 +154,10 @@ const ModalNewDelivery = ({uid, resetData}) => {
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: '#EEE',
+  },
   button: {
     marginVertical: 20,
     paddingVertical: 10,

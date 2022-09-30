@@ -101,7 +101,7 @@ const Customers = () => {
           );
         }}
       />
-      <Modal visible={modalVisible} animationType="fade">
+      <Modal visible={modalVisible} animationType="slide">
         <ModalNewUser setModalVisible={setModalVisible} />
       </Modal>
       <Modal animationType="slide" visible={modalCC}>
