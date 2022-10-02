@@ -48,11 +48,7 @@ const FormUser = ({setModalVisible, edit}) => {
     if (edit) {
       const [d, m, y] = visitorUser.dob.slice(0, 10).split('/');
       setChild(visitorUser.child);
-      setDate(
-        new Date(
-          moment.utc(moment(`${y}/${m}/${d}`).format('YYYY/MM/DD')).format(),
-        ),
-      );
+      setDate(new Date(`${y}/${m}/${d}`));
       setPensioner(visitorUser.pensioner);
     }
   }, []);

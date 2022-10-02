@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import axiosClient from '../config/axiosClient';
 
 const AppContext = createContext();
@@ -11,6 +11,12 @@ const AppProvider = ({children}) => {
   const [adminUser, setAdminUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [report, setReport] = useState({});
+
+  useEffect(() => {
+    axiosClient('/visits/0')
+      .then(({data}) => console.log(data))
+      .catch(console.log);
+  }, []);
 
   const selectUser = uid => {
     if (!uid) {

@@ -1,4 +1,12 @@
-import {View, Text, Image, Pressable, StyleSheet, Modal} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  Modal,
+  SafeAreaView,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import globalStyles from '../styles/styles';
 import {StackActions, useNavigation} from '@react-navigation/native';
@@ -37,20 +45,23 @@ const Cupboard = () => {
       console.log(error);
     }
 
-    navigation.dispatch(StackActions.pop(2));
+    navigation.dispatch(StackActions.popToTop());
   };
 
   return (
-    <View
-      style={[
-        globalStyles.white,
-        globalStyles.flex,
-        {justifyContent: 'space-around'},
-      ]}>
-      <Animatable.View animation={'bounceInDown'} delay={2000}>
-        <Pressable
-          style={styles.userConfig}
-          onPress={() => setModalVisible(true)}>
+    <SafeAreaView style={[globalStyles.white, globalStyles.flex]}>
+      <Animatable.View animation={'bounceInDown'} delay={500}>
+        <Image
+          style={{alignSelf: 'center', height: 250, width: 250}}
+          source={require('../assets/ccvc.png')}
+        />
+      </Animatable.View>
+
+      <Animatable.View
+        style={styles.userConfig}
+        animation={'bounceInDown'}
+        delay={2000}>
+        <Pressable onPress={() => setModalVisible(true)}>
           <FontAwesomeIcon
             style={styles.icon}
             color="#333"
@@ -59,15 +70,8 @@ const Cupboard = () => {
           />
         </Pressable>
       </Animatable.View>
-      <View style={[globalStyles.view]}>
-        <Animatable.View animation={'bounceInDown'} delay={500}>
-          <Image
-            style={{alignSelf: 'center', height: 250, width: 250}}
-            source={require('../assets/ccvc.png')}
-          />
-        </Animatable.View>
-      </View>
-      <View>
+
+      <View style={{position: 'absolute', width: '100%', top: '48%'}}>
         <Animatable.View animation={'bounceInLeft'} delay={1000}>
           <Pressable
             style={styles.btnGreen}
@@ -108,7 +112,7 @@ const Cupboard = () => {
           </Pressable>
         </Animatable.View>
       </View>
-      <View>
+      <View style={{bottom: 25, position: 'absolute', width: '100%'}}>
         <Animatable.View animation={'bounceInUp'} delay={1500}>
           <Pressable style={styles.btnLogout} onPress={handleLogout}>
             <FontAwesomeIcon
@@ -122,7 +126,7 @@ const Cupboard = () => {
       <Modal visible={modalVisible} transparent={true} animationType="fade">
         <ModalAdminConfig setModalVisible={setModalVisible} />
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -137,8 +141,9 @@ const styles = StyleSheet.create({
   ],
   userConfig: {
     position: 'absolute',
-    top: 30,
+    top: 50,
     right: 30,
+    padding: 5,
   },
   btnLogout: [globalStyles.button, globalStyles.ccDark, globalStyles.view],
 });

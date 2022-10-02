@@ -19,7 +19,9 @@ import globalStyles from '../styles/styles';
 
 const WelcomeScreen = () => {
   useEffect(() => {
-    SplashScreen.hide();
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 5000);
   }, []);
   const navigation = useNavigation();
 

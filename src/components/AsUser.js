@@ -1,5 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {Text, View, TextInput, Pressable, Alert, Modal} from 'react-native';
+import React, {useState, useEffect, Fragment} from 'react';
+import {
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  Alert,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 
 import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -115,11 +123,17 @@ const AsUser = () => {
         ]}
         onPress={() => handleLogin()}
         disabled={isLoading}>
-        <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#FFF'}]}
-          icon={faSignInAlt}
-        />
-        <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
+        {isLoading ? (
+          <ActivityIndicator animating={isLoading} />
+        ) : (
+          <Fragment>
+            <FontAwesomeIcon
+              style={[globalStyles.icon, {color: '#FFF'}]}
+              icon={faSignInAlt}
+            />
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}> Login</Text>
+          </Fragment>
+        )}
       </Pressable>
       <Modal animationType="slide" visible={modalVisible}>
         <ModalUser resetState={resetState} />
