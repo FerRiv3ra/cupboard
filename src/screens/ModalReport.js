@@ -39,7 +39,22 @@ const ModalReport = ({resetData, startDate, finalDate}) => {
     const {usersArr, visits: dataVisits} = report;
     setVisits(dataVisits.length);
     setPeople(usersArr.length);
-    setUsers(usersArr);
+
+    setUsers(
+      usersArr.map(user => {
+        const amount = dataVisits.reduce((total, visit) => {
+          if (visit.customerId === user.customerId) {
+            total += visit.amount;
+          }
+
+          return total;
+        }, 0);
+
+        user.amount = amount;
+
+        return user;
+      }),
+    );
 
     setTotalHousehold(
       usersArr.reduce((tot, item) => {
@@ -132,6 +147,38 @@ const ModalReport = ({resetData, startDate, finalDate}) => {
           delay={2000}>
           <ScrollView horizontal>
             <ScrollView>
+              <View style={styles.titles}>
+                <Text style={[styles.thead, {width: 30, textAlign: 'center'}]}>
+                  ID
+                </Text>
+                <Text style={[styles.thead, {width: 110}]}>First name</Text>
+                <Text style={[styles.thead, {width: 110}]}>Last name</Text>
+                <Text style={[styles.thead, {width: 110}]}>Phone number</Text>
+                <Text style={[styles.thead, {width: 110, textAlign: 'center'}]}>
+                  Number in household
+                </Text>
+                <Text style={[styles.thead, {width: 80, textAlign: 'center'}]}>
+                  Children
+                </Text>
+                <Text style={[styles.thead, {width: 150}]}>Address</Text>
+                <Text style={[styles.thead, {width: 100}]}>Town</Text>
+                <Text style={[styles.thead, {width: 80}]}>Postcode</Text>
+                <Text style={[styles.thead, {width: 130}]}>
+                  Housing provider
+                </Text>
+                <Text style={[styles.thead, {width: 90, textAlign: 'center'}]}>
+                  Pensioners
+                </Text>
+                <Text style={[styles.thead, {width: 90, textAlign: 'center'}]}>
+                  Disabilities
+                </Text>
+                <Text style={[styles.thead, {width: 80, textAlign: 'center'}]}>
+                  Total donation
+                </Text>
+                <Text style={[styles.thead, {width: 50, textAlign: 'center'}]}>
+                  Visits
+                </Text>
+              </View>
               {users.map((user, index) => (
                 <DetailReport user={user} key={user.uid} index={index} />
               ))}
@@ -182,6 +229,19 @@ const styles = StyleSheet.create({
   reportContainer: {
     backgroundColor: '#FFF',
     borderRadius: 5,
+  },
+  titles: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+    alignItems: 'center',
+    backgroundColor: '#336210',
+  },
+  thead: {
+    fontWeight: '700',
+    marginVertical: 'auto',
+    paddingVertical: 3,
+    color: '#FFF',
   },
   view: {
     marginHorizontal: 10,

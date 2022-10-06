@@ -40,6 +40,8 @@ const FormUser = ({setModalVisible, edit}) => {
   const [housingProvider, setHousingProvider] = useState('');
   const [phone, setPhone] = useState('');
   const [pensioner, setPensioner] = useState(false);
+  const [pensionerCant, setPensionerCant] = useState('');
+  const [disabilities, setDisabilities] = useState(false);
   const [policy, setPolicy] = useState(false);
 
   const {createUser, visitorUser, editUser, selectUser} = useAppContext();
@@ -50,6 +52,7 @@ const FormUser = ({setModalVisible, edit}) => {
       setChild(visitorUser.child);
       setDate(new Date(`${y}/${m}/${d}`));
       setPensioner(visitorUser.pensioner);
+      setDisabilities(visitorUser.disabilities);
     }
   }, []);
 
@@ -64,6 +67,7 @@ const FormUser = ({setModalVisible, edit}) => {
     setTown('');
     setHousingProvider('');
     setPhone('');
+    setPensionerCant('');
     setPolicy(false);
   };
 
@@ -93,6 +97,11 @@ const FormUser = ({setModalVisible, edit}) => {
       return;
     }
 
+    if (pensioner && Number(pensionerCant) <= 0) {
+      Alert.alert('Error', 'Number of pensioners is required');
+      return;
+    }
+
     if (!policy) {
       Alert.alert('Error', 'It is necessary to accept the terms');
       return;
@@ -111,6 +120,8 @@ const FormUser = ({setModalVisible, edit}) => {
       housingProvider,
       phone,
       pensioner,
+      pensionerCant,
+      disabilities,
     };
 
     const resp = await createUser(user);
@@ -152,6 +163,17 @@ const FormUser = ({setModalVisible, edit}) => {
     if (phone) user.phone = phone;
     if (visitorUser && visitorUser.pensioner !== pensioner)
       user.pensioner = pensioner;
+    if (
+      visitorUser &&
+      pensioner &&
+      pensioner !== visitorUser.pensioner &&
+      Number(pensionerCant) <= 0
+    ) {
+      Alert.alert('Error', 'Number of pensioners is required');
+      return;
+    }
+    if (visitorUser && visitorUser.disabilities !== disabilities)
+      user.disabilities = disabilities;
 
     if (
       visitorUser &&
@@ -303,6 +325,20 @@ const FormUser = ({setModalVisible, edit}) => {
       <View style={styles.input}>
         <FontAwesomeIcon
           style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+          icon={faCity}
+          size={14}
+        />
+        <TextInput
+          placeholder={edit ? visitorUser.town : 'Town'}
+          keyboardType="default"
+          placeholderTextColor={'#666'}
+          onChangeText={setTown}
+          value={town}
+        />
+      </View>
+      <View style={styles.input}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
           icon={faMapMarkerAlt}
           size={14}
         />
@@ -313,20 +349,6 @@ const FormUser = ({setModalVisible, edit}) => {
           onChangeText={setPostcode}
           value={postcode}
           autoCapitalize="characters"
-        />
-      </View>
-      <View style={styles.input}>
-        <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
-          icon={faCity}
-          size={14}
-        />
-        <TextInput
-          placeholder={edit ? visitorUser.town : 'Town'}
-          keyboardType="default"
-          placeholderTextColor={'#666'}
-          onChangeText={setTown}
-          value={town}
         />
       </View>
       <View style={styles.input}>
@@ -366,6 +388,38 @@ const FormUser = ({setModalVisible, edit}) => {
           ]}
           onChange={setPensioner}
           selectedIndex={edit ? (visitorUser.pensioner ? 1 : 0) : 0}
+        />
+      </View>
+      {pensioner && (
+        <View style={[styles.input, {marginTop: 5}]}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, {color: '#666', marginRight: 10}]}
+            icon={faUsers}
+            size={14}
+          />
+          <TextInput
+            placeholder={
+              edit && visitorUser.pensioner
+                ? visitorUser.pensionerCant?.toString()
+                : 'How many pensioners?'
+            }
+            keyboardType="numeric"
+            placeholderTextColor={'#666'}
+            onChangeText={setPensionerCant}
+            value={pensionerCant}
+          />
+        </View>
+      )}
+
+      <View>
+        <Text style={styles.children}>Disabilities</Text>
+        <SegmentedControl
+          values={[
+            {key: 'No', value: false},
+            {key: 'Yes', value: true},
+          ]}
+          onChange={setDisabilities}
+          selectedIndex={edit ? (visitorUser.disabilities ? 1 : 0) : 0}
         />
       </View>
 
